@@ -91,6 +91,21 @@ body {
 }
 .btn-secondary:active { background: var(--bg3); }
 
+/* ── SPLASH FORM ── */
+.splash-form { width: 100%; margin-bottom: 1.25rem; text-align: left; }
+.splash-form label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
+.splash-form input {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg3); color: var(--text);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-size: 0.95rem; font-family: 'IBM Plex Sans', sans-serif;
+  outline: none; transition: border-color .2s;
+}
+.splash-form input:focus { border-color: var(--accent); }
+.splash-form input::placeholder { color: var(--muted); }
+.splash-form .field + .field { margin-top: 10px; }
+.splash-error { font-size: 0.8rem; color: var(--danger); margin-bottom: 10px; display: none; }
+
 /* ── HOME ── */
 #home { background: var(--bg); }
 .topbar {
@@ -391,6 +406,17 @@ body {
       <span>70 min c/u</span>
       <span>5 módulos</span>
     </div>
+    <div class="splash-form">
+      <div class="field">
+        <label>Tu nombre *</label>
+        <input type="text" id="input-nombre" placeholder="Ej: Juan Pérez" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Email (opcional)</label>
+        <input type="email" id="input-email" placeholder="juan@ejemplo.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="splash-error" id="splash-error">Por favor ingresá tu nombre para continuar.</div>
     <button class="btn-primary" onclick="goHome()">Comenzar curso</button>
     <button class="btn-secondary" onclick="goHome()">Continuar donde dejé</button>
   </div>
@@ -788,6 +814,10 @@ const QUIZZES = {
   ]
 };
 
+// ── GOOGLE SHEETS CONFIG ──────────────────────────────────────────────────────
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzaIsMLd1hK4bSwzmExekbU1ZnmCzXbdXzjW4DwAaDFwgciWGBPhL50FDZIeHPlJC3l/exec';
+// ─────────────────────────────────────────────────────────────────────────────
+
 let currentScreen = 'splash';
 let currentModule = null;
 let currentClassId = null;
@@ -809,6 +839,39 @@ function markComplete(classId) {
 function isComplete(classId) { return !!getProgress()[classId]; }
 function countComplete() { return Object.keys(getProgress()).length; }
 
+// ── IDENTIDAD DEL ALUMNO ──────────────────────────────────────────────────────
+function getAlumno() {
+  try { return JSON.parse(localStorage.getItem('calderas_alumno') || 'null'); }
+  catch(e) { return null; }
+}
+function saveAlumno(nombre, email) {
+  try { localStorage.setItem('calderas_alumno', JSON.stringify({ nombre, email })); } catch(e) {}
+}
+
+// ── ENVÍO A GOOGLE SHEETS ─────────────────────────────────────────────────────
+function sendToSheets(classId, correct, total, pct, passed) {
+  if (!SHEETS_URL) return;
+  const alumno = getAlumno() || { nombre: 'Anónimo', email: '' };
+  const clase = CLASSES[classId] ? CLASSES[classId].title : 'Clase ' + classId;
+  const payload = {
+    nombre: alumno.nombre,
+    email: alumno.email,
+    clase: 'Clase ' + classId + ' — ' + clase,
+    correctas: correct,
+    total: total,
+    porcentaje: pct,
+    aprobado: passed ? 'Sí' : 'No',
+    fecha: new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}); // silencioso si no hay conexión
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -817,6 +880,21 @@ function showScreen(id) {
 }
 
 function goHome() {
+  const nombreInput = document.getElementById('input-nombre');
+  // Si estamos en splash, validar nombre
+  if (currentScreen === 'splash') {
+    const nombre = nombreInput ? nombreInput.value.trim() : '';
+    const alumnoGuardado = getAlumno();
+    if (!nombre && !alumnoGuardado) {
+      const err = document.getElementById('splash-error');
+      if (err) { err.style.display = 'block'; }
+      return;
+    }
+    if (nombre) {
+      const email = (document.getElementById('input-email') || {}).value || '';
+      saveAlumno(nombre, email.trim());
+    }
+  }
   renderHome();
   showScreen('home');
 }
@@ -1013,6 +1091,7 @@ function showQuizResult() {
   const pct = Math.round(correct/total*100);
   const passed = pct >= 67;
   if (passed) markComplete(currentQuizClass);
+  sendToSheets(currentQuizClass, correct, total, pct, passed);
 
   document.getElementById('quiz-pill').textContent = 'Resultado';
   document.getElementById('quiz-content-area').innerHTML = `
@@ -1063,6 +1142,17 @@ function installApp() {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+
+// Pre-cargar datos del alumno si ya los había ingresado
+(function() {
+  const alumno = getAlumno();
+  if (alumno) {
+    const n = document.getElementById('input-nombre');
+    const e = document.getElementById('input-email');
+    if (n) n.value = alumno.nombre;
+    if (e) e.value = alumno.email || '';
+  }
+})();
 
 renderHome();
 </script>
