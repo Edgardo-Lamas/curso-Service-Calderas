@@ -109,6 +109,72 @@ body {
 /* ── SVG DIAGRAMS ── */
 .svg-block { padding: 0 !important; background: none !important; border: none !important; margin: 12px 0; }
 .svg-block svg { border-radius: 10px; display: block; width: 100%; }
+
+/* ── VIDEO BUTTON ── */
+.video-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; margin: 16px 0 4px;
+  background: rgba(240,90,90,.08); border: 1px solid rgba(240,90,90,.25);
+  border-radius: var(--radius); color: #f08080;
+  font-size: 0.9rem; font-weight: 500; text-decoration: none;
+  transition: background .2s;
+}
+.video-btn:active { background: rgba(240,90,90,.18); }
+.video-btn-placeholder {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; margin: 16px 0 4px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--muted); font-size: 0.9rem;
+}
+
+/* ── MODULE PROGRESS IN CLASS VIEW ── */
+.mod-class-progress { margin-bottom: 18px; }
+.mod-class-info {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.72rem; margin-bottom: 6px;
+  font-family: 'IBM Plex Mono', monospace; color: var(--muted);
+}
+
+/* ── RETRY COUNTER ── */
+.retry-pill {
+  display: inline-block; font-size: 0.72rem; font-family: 'IBM Plex Mono', monospace;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+  background: var(--bg3); color: var(--muted); border: 1px solid var(--border);
+}
+.retry-pill.warn { color: var(--warn); border-color: rgba(245,166,35,.3); background: rgba(245,166,35,.06); }
+.retry-pill.danger { color: var(--danger); border-color: rgba(240,90,90,.3); background: rgba(240,90,90,.06); }
+
+/* ── BADGE OVERLAY ── */
+#badge-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.88);
+  display: flex; align-items: center; justify-content: center;
+  animation: bdFadeIn .3s ease;
+}
+#badge-overlay.hidden { display: none; }
+.badge-card {
+  background: var(--bg2); border-radius: var(--radius-lg);
+  padding: 44px 32px; text-align: center; max-width: 300px; width: 88%;
+  border: 1px solid var(--border2);
+  animation: bdScale .45s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.badge-emoji { font-size: 72px; margin-bottom: 16px; display: block; }
+.badge-label { font-size: 0.75rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; letter-spacing: .06em; margin-bottom: 6px; }
+.badge-mod-name { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+.badge-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 28px; }
+@keyframes bdFadeIn { from { opacity:0 } to { opacity:1 } }
+@keyframes bdScale { from { transform:scale(.4) rotate(-8deg); opacity:0 } to { transform:scale(1) rotate(0); opacity:1 } }
+
+/* ── NOTIFICATION BANNER ── */
+#notif-banner {
+  display: none; margin: 16px 20px 0; padding: 14px 16px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius); font-size: 0.85rem;
+}
+#notif-banner.show { display: flex; align-items: center; gap: 12px; }
+.notif-text { flex: 1; color: var(--text); line-height: 1.4; }
+.notif-yes { padding: 8px 14px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; }
+.notif-no { padding: 8px 10px; background: none; color: var(--muted); border: none; font-size: 0.8rem; cursor: pointer; }
 .btn-user-change {
   background: none; border: none; color: var(--muted);
   font-size: 0.75rem; cursor: pointer; padding: 4px 8px;
@@ -466,6 +532,11 @@ body {
       <div class="coming-soon">Próx.</div>
     </div>
   </div>
+  <div id="notif-banner">
+    <div class="notif-text">🔔 ¿Activamos recordatorios para que no pierdas el ritmo?</div>
+    <button class="notif-yes" onclick="enableNotifications()">Activar</button>
+    <button class="notif-no" onclick="dismissNotifBanner()">Ahora no</button>
+  </div>
   <div id="install-banner">
     <span>Instalá la app para usarla sin internet</span>
     <button id="install-btn" onclick="installApp()">Instalar</button>
@@ -521,6 +592,17 @@ body {
     <div class="lab-ph-title">Simulador de cascada</div>
     <div class="lab-ph-desc">El diagrama interactivo de cascada de funcionamiento estará disponible próximamente. Podrás provocar fallas en cada etapa y diagnosticar el problema.</div>
     <div class="lab-ph-badge">En desarrollo · Próxima actualización</div>
+  </div>
+</div>
+
+<!-- BADGE OVERLAY -->
+<div id="badge-overlay" class="hidden">
+  <div class="badge-card">
+    <span class="badge-emoji" id="badge-emoji"></span>
+    <div class="badge-label">MÓDULO COMPLETADO</div>
+    <div class="badge-mod-name" id="badge-mod-name"></div>
+    <div class="badge-sub" id="badge-mod-sub"></div>
+    <button class="btn-primary" onclick="closeBadge()">Continuar →</button>
   </div>
 </div>
 
@@ -1122,6 +1204,103 @@ const QUIZZES = {
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzaIsMLd1hK4bSwzmExekbU1ZnmCzXbdXzjW4DwAaDFwgciWGBPhL50FDZIeHPlJC3l/exec';
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── VIDEOS (agregar URLs cuando estén listos) ─────────────────────────────────
+const VIDEOS = {
+  // 1: 'https://youtube.com/...',
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── INSIGNIAS POR MÓDULO ──────────────────────────────────────────────────────
+const MOD_BADGES = {
+  1: { emoji: '📚', sub: 'Historia y fundamentos' },
+  2: { emoji: '🔥', sub: 'Tipos de calderas y combustión' },
+  3: { emoji: '⚙️', sub: 'Componentes internos' },
+  4: { emoji: '🔧', sub: 'Funcionamiento y medición' },
+  5: { emoji: '🛡️', sub: 'Seguridad y mantenimiento' },
+};
+
+function getBadges() {
+  try { return JSON.parse(localStorage.getItem('calderas_badges') || '[]'); } catch(e) { return []; }
+}
+function hasBadge(modId) { return getBadges().includes(modId); }
+function saveBadge(modId) {
+  const b = getBadges();
+  if (!b.includes(modId)) { b.push(modId); localStorage.setItem('calderas_badges', JSON.stringify(b)); }
+}
+
+function checkModuleComplete(classId) {
+  const m = MODULES.find(x => x.classes.includes(classId));
+  if (!m) return;
+  const allDone = m.classes.every(c => isComplete(c));
+  if (allDone && !hasBadge(m.id)) {
+    saveBadge(m.id);
+    setTimeout(() => showBadge(m), 400);
+  }
+}
+function showBadge(m) {
+  const b = MOD_BADGES[m.id] || { emoji: '🏅', sub: m.sub };
+  document.getElementById('badge-emoji').textContent = b.emoji;
+  document.getElementById('badge-mod-name').textContent = 'Módulo ' + m.id + ' — ' + m.name;
+  document.getElementById('badge-mod-sub').textContent = b.sub;
+  document.getElementById('badge-overlay').classList.remove('hidden');
+}
+function closeBadge() {
+  document.getElementById('badge-overlay').classList.add('hidden');
+}
+
+// ── REINTENTOS ────────────────────────────────────────────────────────────────
+const MAX_INTENTOS = 3;
+function getIntentos() {
+  try { return JSON.parse(localStorage.getItem('calderas_intentos') || '{}'); } catch(e) { return {}; }
+}
+function getIntentosClase(classId) { return getIntentos()[classId] || 0; }
+function incrementIntentos(classId) {
+  const i = getIntentos(); i[classId] = (i[classId] || 0) + 1;
+  localStorage.setItem('calderas_intentos', JSON.stringify(i));
+  return i[classId];
+}
+function resetIntentos(classId) {
+  const i = getIntentos(); delete i[classId];
+  localStorage.setItem('calderas_intentos', JSON.stringify(i));
+}
+
+// ── NOTIFICACIONES ────────────────────────────────────────────────────────────
+function checkNotifBanner() {
+  if (localStorage.getItem('calderas_notif_asked')) return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'default') return;
+  if (!getAlumno()) return;
+  if (countComplete() < 1) return; // solo mostrar tras completar al menos 1 clase
+  document.getElementById('notif-banner').classList.add('show');
+}
+async function enableNotifications() {
+  dismissNotifBanner();
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') scheduleReminder();
+}
+function dismissNotifBanner() {
+  localStorage.setItem('calderas_notif_asked', '1');
+  document.getElementById('notif-banner').classList.remove('show');
+}
+function scheduleReminder() {
+  localStorage.setItem('calderas_last_visit', Date.now().toString());
+}
+function checkReminder() {
+  const last = localStorage.getItem('calderas_last_visit');
+  const alumno = getAlumno();
+  if (last && alumno && Notification.permission === 'granted') {
+    const diff = Date.now() - parseInt(last);
+    if (diff > 3 * 24 * 60 * 60 * 1000) {
+      new Notification('¡Seguí con el curso! 🔥', {
+        body: alumno.nombre + ', retomá donde dejaste.',
+        icon: '/icon-192.png'
+      });
+    }
+  }
+  localStorage.setItem('calderas_last_visit', Date.now().toString());
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 let currentScreen = 'splash';
 let currentModule = null;
 let currentClassId = null;
@@ -1139,6 +1318,8 @@ function saveProgress(p) {
 }
 function markComplete(classId) {
   const p = getProgress(); p[classId] = true; saveProgress(p);
+  resetIntentos(classId);
+  checkModuleComplete(classId);
 }
 function isComplete(classId) { return !!getProgress()[classId]; }
 function countComplete() { return Object.keys(getProgress()).length; }
@@ -1200,8 +1381,10 @@ function goHome() {
       saveAlumno(nombre, email.trim());
     }
   }
+  checkReminder();
   renderHome();
   showScreen('home');
+  setTimeout(checkNotifBanner, 1500);
 }
 
 let _devTaps = 0, _devTimer = null;
@@ -1301,12 +1484,26 @@ function openClass(classId) {
 
   document.getElementById('class-nav-pill').textContent = 'Clase ' + classId + '/16';
 
+  const modIdx = m.classes.indexOf(classId);
+  const doneInMod = m.classes.filter(c => isComplete(c)).length;
+  const modPct = Math.round(doneInMod / m.classes.length * 100);
+
   let html = '';
   html += '<div class="class-badge" style="background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:#7fb3ff">Módulo ' + m.id + ' · Clase ' + classId + '</div>';
   html += '<div class="class-main-title">' + cls.title + '</div>';
-  html += '<div style="margin-bottom:16px">';
+  html += '<div style="margin-bottom:12px">';
   cls.tags.forEach(t => { html += `<span class="tag-pill tag-${t}">${tagLabel(t)}</span>`; });
   html += '</div>';
+
+  // Barra de progreso del módulo
+  html += `<div class="mod-class-progress">
+    <div class="mod-class-info">
+      <span style="color:${m.color}">${m.name}</span>
+      <span>Clase ${modIdx+1} de ${m.classes.length} · ${doneInMod} completada${doneInMod!==1?'s':''}</span>
+    </div>
+    <div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${modPct}%;background:${m.color}"></div></div>
+  </div>`;
+
   html += '<div class="class-section"><div class="class-section-title">Contenido de la clase</div>';
   cls.content.forEach(block => {
     if (block.type === 'svg') {
@@ -1319,6 +1516,15 @@ function openClass(classId) {
   if (cls.practica) {
     html += `<div class="practica-block"><div class="practica-label">${cls.practica.label}</div><div class="practica-text">${cls.practica.text}</div></div>`;
   }
+
+  // Botón de video
+  const videoUrl = VIDEOS[classId];
+  if (videoUrl) {
+    html += `<a href="${videoUrl}" target="_blank" rel="noopener" class="video-btn">▶&nbsp; Ver video de la clase</a>`;
+  } else {
+    html += `<div class="video-btn-placeholder">▶&nbsp; Video de la clase · Próximamente</div>`;
+  }
+
   document.getElementById('class-content-area').innerHTML = html;
 
   const allClasses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
@@ -1356,10 +1562,6 @@ function nextClass() {
   if (idx < all.length-1) openClass(all[idx+1]);
 }
 
-function completeAndQuiz() {
-  startQuiz(currentClassId);
-}
-
 function startQuiz(classId) {
   currentQuizClass = classId;
   currentQuizQ = 0;
@@ -1367,6 +1569,10 @@ function startQuiz(classId) {
   quizAnswered = false;
   renderQuizQuestion();
   showScreen('quiz-view');
+}
+
+function completeAndQuiz() {
+  startQuiz(currentClassId);
 }
 
 function renderQuizQuestion() {
@@ -1428,17 +1634,29 @@ function showQuizResult() {
   if (passed) markComplete(currentQuizClass);
   sendToSheets(currentQuizClass, correct, total, pct, passed);
 
+  let intentos = 0;
+  let bloqueado = false;
+  if (!passed) {
+    intentos = incrementIntentos(currentQuizClass);
+    bloqueado = intentos >= MAX_INTENTOS;
+  }
+  const retryClass = intentos >= MAX_INTENTOS ? 'danger' : intentos >= 2 ? 'warn' : '';
+  const retryLabel = intentos > 0 ? `Intento ${intentos}/${MAX_INTENTOS}` : '';
+
   document.getElementById('quiz-pill').textContent = 'Resultado';
   document.getElementById('quiz-content-area').innerHTML = `
     <div class="quiz-result">
+      ${!passed && retryLabel ? `<div class="retry-pill ${retryClass}">${retryLabel}</div>` : ''}
       <div class="result-score" style="color:${passed?'var(--success)':'var(--danger)'}">${correct}/${total}</div>
       <div class="result-label">${pct}% correcto</div>
       <div class="result-msg">${passed
         ? 'Muy bien. La clase quedó marcada como completada.'
-        : 'Podés repasar el contenido y volver a intentarlo cuando quieras.'
+        : bloqueado
+          ? 'Repasá bien el contenido antes de volver a intentarlo.'
+          : 'Podés repasar el contenido y volver a intentarlo.'
       }</div>
       <button class="btn-primary" onclick="afterQuiz(${passed})">${passed ? 'Continuar →' : 'Repasar la clase'}</button>
-      ${!passed ? `<button class="btn-secondary" onclick="startQuiz(${currentQuizClass})" style="margin-top:10px">Intentar de nuevo</button>` : ''}
+      ${!passed && !bloqueado ? `<button class="btn-secondary" onclick="startQuiz(${currentQuizClass})" style="margin-top:10px">Intentar de nuevo</button>` : ''}
     </div>
   `;
   document.getElementById('quiz-nav-area').innerHTML = '';
@@ -1474,8 +1692,20 @@ function installApp() {
   });
 }
 
+let swReg = null;
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js')
+    .then(reg => { swReg = reg; })
+    .catch(()=>{});
+}
+
+function scheduleReminder() {
+  localStorage.setItem('calderas_last_visit', Date.now().toString());
+  if (swReg && 'periodicSync' in swReg) {
+    swReg.periodicSync.register('calderas-reminder', {
+      minInterval: 3 * 24 * 60 * 60 * 1000
+    }).catch(()=>{});
+  }
 }
 
 // Pre-cargar datos del alumno si ya los había ingresado
