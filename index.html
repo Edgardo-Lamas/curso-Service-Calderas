@@ -105,6 +105,10 @@ body {
 .splash-form input::placeholder { color: var(--muted); }
 .splash-form .field + .field { margin-top: 10px; }
 .splash-error { font-size: 0.8rem; color: var(--danger); margin-bottom: 10px; display: none; }
+
+/* ── SVG DIAGRAMS ── */
+.svg-block { padding: 0 !important; background: none !important; border: none !important; margin: 12px 0; }
+.svg-block svg { border-radius: 10px; display: block; width: 100%; }
 .btn-user-change {
   background: none; border: none; color: var(--muted);
   font-size: 0.75rem; cursor: pointer; padding: 4px 8px;
@@ -554,6 +558,290 @@ const MODULES = [
   }
 ];
 
+// ── DIAGRAMAS SVG ─────────────────────────────────────────────────────────────
+const DIAGRAMS = {
+
+c1: `<svg viewBox="0 0 340 195" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="340" height="195" fill="#1a1f2e" rx="10"/>
+<text x="170" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">COMPARACIÓN DE EQUIPOS</text>
+<line x1="0" y1="24" x2="340" y2="24" stroke="#ffffff08" stroke-width="1"/>
+<line x1="114" y1="28" x2="114" y2="188" stroke="#ffffff08" stroke-width="1"/>
+<line x1="227" y1="28" x2="227" y2="188" stroke="#ffffff08" stroke-width="1"/>
+<text x="57" y="46" text-anchor="middle" fill="#4f8ef7" font-size="12" font-weight="bold" font-family="sans-serif">Calefón</text>
+<text x="57" y="70" text-anchor="middle" font-size="22">🚿</text>
+<text x="22" y="90" fill="#34c97a" font-size="9" font-family="sans-serif">✓  agua caliente</text>
+<text x="22" y="105" fill="#f05a5a" font-size="9" font-family="sans-serif">✗  calefacción</text>
+<text x="22" y="120" fill="#f05a5a" font-size="9" font-family="sans-serif">✗  bomba circuladora</text>
+<text x="22" y="135" fill="#f05a5a" font-size="9" font-family="sans-serif">✗  radiadores</text>
+<rect x="17" y="150" width="80" height="16" fill="#4f8ef712" rx="4"/>
+<text x="57" y="162" text-anchor="middle" fill="#4f8ef7" font-size="8" font-family="monospace">solo ACS</text>
+<text x="170" y="46" text-anchor="middle" fill="#f5a623" font-size="12" font-weight="bold" font-family="sans-serif">Termotanque</text>
+<text x="170" y="70" text-anchor="middle" font-size="22">🛢</text>
+<text x="130" y="90" fill="#34c97a" font-size="9" font-family="sans-serif">✓  agua caliente</text>
+<text x="130" y="105" fill="#f05a5a" font-size="9" font-family="sans-serif">✗  calefacción</text>
+<text x="130" y="120" fill="#f05a5a" font-size="9" font-family="sans-serif">✗  bomba circuladora</text>
+<text x="130" y="135" fill="#34c97a" font-size="9" font-family="sans-serif">✓  reserva en tanque</text>
+<rect x="130" y="150" width="80" height="16" fill="#f5a62312" rx="4"/>
+<text x="170" y="162" text-anchor="middle" fill="#f5a623" font-size="8" font-family="monospace">solo ACS</text>
+<rect x="229" y="26" width="107" height="162" fill="#4f8ef708" rx="8"/>
+<text x="283" y="46" text-anchor="middle" fill="#c46af7" font-size="12" font-weight="bold" font-family="sans-serif">Caldera</text>
+<text x="283" y="70" text-anchor="middle" font-size="22">🔥</text>
+<text x="237" y="90" fill="#34c97a" font-size="9" font-family="sans-serif">✓  agua caliente</text>
+<text x="237" y="105" fill="#34c97a" font-size="9" font-family="sans-serif">✓  calefacción</text>
+<text x="237" y="120" fill="#34c97a" font-size="9" font-family="sans-serif">✓  bomba circuladora</text>
+<text x="237" y="135" fill="#34c97a" font-size="9" font-family="sans-serif">✓  radiadores / piso</text>
+<rect x="238" y="150" width="86" height="16" fill="#c46af712" rx="4"/>
+<text x="283" y="162" text-anchor="middle" fill="#c46af7" font-size="8" font-family="monospace">ACS + calefacción</text>
+<text x="170" y="185" text-anchor="middle" fill="#ffffff18" font-size="7.5" font-family="monospace">ACS = agua caliente sanitaria</text>
+</svg>`,
+
+c3: `<svg viewBox="0 0 340 175" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="340" height="175" fill="#1a1f2e" rx="10"/>
+<text x="170" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">TRANSFERENCIA DE CALOR</text>
+<line x1="0" y1="24" x2="340" y2="24" stroke="#ffffff08" stroke-width="1"/>
+<rect x="6" y="30" width="104" height="136" fill="#242938" rx="8"/>
+<text x="58" y="48" text-anchor="middle" fill="#4f8ef7" font-size="11" font-weight="bold" font-family="sans-serif">Conducción</text>
+<defs><linearGradient id="grd" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f05a5a"/><stop offset="100%" stop-color="#4f8ef7"/></linearGradient></defs>
+<rect x="16" y="56" width="84" height="11" fill="url(#grd)" rx="3"/>
+<text x="58" y="76" text-anchor="middle" fill="#7b8296" font-size="8" font-family="sans-serif">caliente → → → frío</text>
+<text x="16" y="92" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">Objeto a objeto en</text>
+<text x="16" y="104" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">contacto directo.</text>
+<text x="16" y="116" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">El calor fluye del</text>
+<text x="16" y="128" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">extremo caliente</text>
+<text x="16" y="140" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">al frío.</text>
+<text x="58" y="157" text-anchor="middle" fill="#4f8ef7" font-size="7.5" font-family="monospace">intercambiador</text>
+<rect x="118" y="30" width="104" height="136" fill="#242938" rx="8"/>
+<text x="170" y="48" text-anchor="middle" fill="#34c97a" font-size="11" font-weight="bold" font-family="sans-serif">Convección</text>
+<rect x="128" y="56" width="84" height="50" fill="#1a1f2e" rx="4"/>
+<text x="152" y="100" text-anchor="middle" fill="#f05a5a" font-size="10" font-family="sans-serif">↑↑</text>
+<text x="152" y="84" text-anchor="middle" fill="#f05a5a" font-size="10" font-family="sans-serif">↑↑</text>
+<text x="152" y="68" text-anchor="middle" fill="#f05a5a" font-size="7" font-family="sans-serif">caliente</text>
+<text x="190" y="66" text-anchor="middle" fill="#4f8ef7" font-size="7" font-family="sans-serif">frío</text>
+<text x="190" y="78" text-anchor="middle" fill="#4f8ef7" font-size="10" font-family="sans-serif">↓↓</text>
+<text x="190" y="93" text-anchor="middle" fill="#4f8ef7" font-size="10" font-family="sans-serif">↓↓</text>
+<text x="130" y="120" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">El fluido caliente</text>
+<text x="130" y="132" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">sube, el frío baja</text>
+<text x="130" y="144" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">y toma su lugar.</text>
+<text x="170" y="157" text-anchor="middle" fill="#34c97a" font-size="7.5" font-family="monospace">radiadores</text>
+<rect x="230" y="30" width="104" height="136" fill="#242938" rx="8"/>
+<text x="282" y="48" text-anchor="middle" fill="#f5a623" font-size="11" font-weight="bold" font-family="sans-serif">Radiación</text>
+<circle cx="282" cy="77" r="14" fill="#f5a62322" stroke="#f5a623" stroke-width="1.5"/>
+<text x="282" y="82" text-anchor="middle" fill="#f5a623" font-size="16">☀</text>
+<line x1="265" y1="87" x2="244" y2="100" stroke="#f5a62355" stroke-width="1.5" stroke-dasharray="3,2"/>
+<line x1="268" y1="90" x2="250" y2="106" stroke="#f5a62355" stroke-width="1.5" stroke-dasharray="3,2"/>
+<line x1="272" y1="92" x2="258" y2="112" stroke="#f5a62355" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="240" y="120" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">Sin contacto ni</text>
+<text x="240" y="132" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">fluido intermedio.</text>
+<text x="240" y="144" fill="#e8eaf0" font-size="8.5" font-family="sans-serif">Ondas de energía.</text>
+<text x="282" y="157" text-anchor="middle" fill="#f5a623" font-size="7.5" font-family="monospace">quemador / llama</text>
+</svg>`,
+
+c4: `<svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="340" height="230" fill="#1a1f2e" rx="10"/>
+<text x="170" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">TIPOS DE CALDERAS POR EVACUACIÓN</text>
+<line x1="0" y1="24" x2="340" y2="24" stroke="#ffffff08" stroke-width="1"/>
+<line x1="114" y1="28" x2="114" y2="225" stroke="#ffffff08" stroke-width="1"/>
+<line x1="227" y1="28" x2="227" y2="225" stroke="#ffffff08" stroke-width="1"/>
+<text x="57" y="44" text-anchor="middle" fill="#4f8ef7" font-size="10.5" font-weight="bold" font-family="sans-serif">Atmosférica</text>
+<rect x="32" y="52" width="50" height="70" fill="#242938" rx="5" stroke="#4f8ef740" stroke-width="1"/>
+<text x="57" y="90" text-anchor="middle" font-size="22">🔥</text>
+<line x1="57" y1="122" x2="57" y2="148" stroke="#f05a5a" stroke-width="2"/>
+<text x="57" y="144" text-anchor="middle" fill="#f05a5a" font-size="14">↑</text>
+<text x="57" y="159" text-anchor="middle" fill="#f05a5a" font-size="7.5" font-family="monospace">gases salen</text>
+<line x1="20" y1="95" x2="32" y2="95" stroke="#4f8ef7" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="14" y="92" fill="#4f8ef7" font-size="7" font-family="sans-serif">aire</text>
+<text x="10" y="101" fill="#4f8ef7" font-size="7" font-family="sans-serif">amb.</text>
+<text x="57" y="178" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Toma aire del</text>
+<text x="57" y="189" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">ambiente.</text>
+<text x="57" y="200" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Gases salen por</text>
+<text x="57" y="211" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">caño vertical.</text>
+<text x="57" y="222" text-anchor="middle" fill="#7b8296" font-size="7" font-family="monospace">+ antigua</text>
+<text x="170" y="44" text-anchor="middle" fill="#34c97a" font-size="10.5" font-weight="bold" font-family="sans-serif">Tiro Balanceado</text>
+<rect x="145" y="52" width="50" height="70" fill="#242938" rx="5" stroke="#34c97a40" stroke-width="1"/>
+<text x="170" y="90" text-anchor="middle" font-size="22">🔥</text>
+<rect x="195" y="75" width="30" height="20" fill="#1a1f2e" rx="3" stroke="#34c97a40" stroke-width="1"/>
+<line x1="196" y1="79" x2="224" y2="79" stroke="#f05a5a" stroke-width="1.5"/>
+<line x1="196" y1="89" x2="224" y2="89" stroke="#4f8ef7" stroke-width="1.5"/>
+<polygon points="210,75 225,84 210,93" fill="none" stroke="#34c97a40" stroke-width="1"/>
+<text x="225" y="79" fill="#f05a5a" font-size="8" font-family="sans-serif"> →</text>
+<text x="225" y="91" fill="#4f8ef7" font-size="8" font-family="sans-serif"> ←</text>
+<text x="170" y="178" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Caño doble (coaxial).</text>
+<text x="170" y="189" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Gases salen por el</text>
+<text x="170" y="200" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">interior, aire fresco</text>
+<text x="170" y="211" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">entra por el exterior.</text>
+<text x="170" y="222" text-anchor="middle" fill="#34c97a" font-size="7" font-family="monospace">+ segura</text>
+<text x="283" y="44" text-anchor="middle" fill="#c46af7" font-size="10.5" font-weight="bold" font-family="sans-serif">Condensación</text>
+<rect x="258" y="52" width="50" height="70" fill="#242938" rx="5" stroke="#c46af740" stroke-width="1"/>
+<text x="283" y="90" text-anchor="middle" font-size="22">🔥</text>
+<rect x="258" y="130" width="50" height="14" fill="#4f8ef715" rx="3" stroke="#4f8ef740" stroke-width="1"/>
+<text x="283" y="140" text-anchor="middle" fill="#4f8ef7" font-size="7" font-family="sans-serif">condensado 💧</text>
+<line x1="283" y1="122" x2="283" y2="130" stroke="#c46af7" stroke-width="1.5"/>
+<text x="283" y="162" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Gases salen fríos</text>
+<text x="283" y="173" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">(50-60°C) por caño</text>
+<text x="283" y="184" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">de plástico.</text>
+<text x="283" y="195" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">Recupera el calor</text>
+<text x="283" y="206" text-anchor="middle" fill="#e8eaf0" font-size="8" font-family="sans-serif">del vapor.</text>
+<text x="283" y="222" text-anchor="middle" fill="#c46af7" font-size="7" font-family="monospace">+ eficiente (109%)</text>
+</svg>`,
+
+c7: `<svg viewBox="0 0 340 248" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="340" height="248" fill="#1a1f2e" rx="10"/>
+<text x="170" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">CIRCUITO HIDRÁULICO</text>
+<rect x="8" y="30" width="88" height="115" fill="#242938" rx="8" stroke="#4f8ef760" stroke-width="1.5"/>
+<text x="52" y="48" text-anchor="middle" fill="#4f8ef7" font-size="9.5" font-weight="bold" font-family="sans-serif">CALDERA</text>
+<text x="52" y="70" text-anchor="middle" font-size="18">🔥</text>
+<line x1="18" y1="80" x2="86" y2="80" stroke="#f5a62335" stroke-width="1"/>
+<line x1="18" y1="87" x2="86" y2="87" stroke="#f5a62335" stroke-width="1"/>
+<line x1="18" y1="94" x2="86" y2="94" stroke="#f5a62335" stroke-width="1"/>
+<text x="52" y="110" text-anchor="middle" fill="#7b8296" font-size="7" font-family="sans-serif">intercambiador</text>
+<text x="52" y="121" text-anchor="middle" fill="#7b8296" font-size="7" font-family="sans-serif">de calor</text>
+<rect x="244" y="30" width="88" height="115" fill="#242938" rx="8" stroke="#e8eaf018" stroke-width="1"/>
+<text x="288" y="48" text-anchor="middle" fill="#e8eaf0" font-size="9.5" font-weight="bold" font-family="sans-serif">RADIADORES</text>
+<rect x="255" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<rect x="267" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<rect x="279" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<rect x="291" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<rect x="303" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<rect x="315" y="56" width="9" height="72" fill="#4f8ef722" stroke="#4f8ef740" stroke-width="1" rx="2"/>
+<line x1="52" y1="30" x2="52" y2="18" stroke="#f05a5a" stroke-width="2.5"/>
+<line x1="52" y1="18" x2="288" y2="18" stroke="#f05a5a" stroke-width="2.5"/>
+<line x1="288" y1="18" x2="288" y2="30" stroke="#f05a5a" stroke-width="2.5"/>
+<polygon points="195,13 210,18 195,23" fill="#f05a5a"/>
+<text x="170" y="13" text-anchor="middle" fill="#f05a5a" font-size="7.5" font-family="monospace">IDA (caliente)</text>
+<line x1="52" y1="145" x2="52" y2="165" stroke="#4f8ef7" stroke-width="2.5"/>
+<line x1="52" y1="165" x2="156" y2="165" stroke="#4f8ef7" stroke-width="2.5"/>
+<line x1="184" y1="165" x2="288" y2="165" stroke="#4f8ef7" stroke-width="2.5"/>
+<line x1="288" y1="145" x2="288" y2="165" stroke="#4f8ef7" stroke-width="2.5"/>
+<polygon points="115,160 100,165 115,170" fill="#4f8ef7"/>
+<text x="170" y="159" text-anchor="middle" fill="#4f8ef7" font-size="7.5" font-family="monospace">RETORNO (frío)</text>
+<circle cx="170" cy="165" r="16" fill="#1a1f2e" stroke="#34c97a" stroke-width="1.5"/>
+<text x="170" y="162" text-anchor="middle" fill="#34c97a" font-size="7" font-family="sans-serif">BOMBA</text>
+<text x="170" y="172" text-anchor="middle" fill="#34c97a" font-size="7" font-family="sans-serif">CIRC.</text>
+<circle cx="52" cy="205" r="18" fill="#242938" stroke="#f5a62355" stroke-width="1.5"/>
+<text x="52" y="201" text-anchor="middle" fill="#f5a623" font-size="7" font-family="sans-serif">VASO</text>
+<text x="52" y="211" text-anchor="middle" fill="#f5a623" font-size="7" font-family="sans-serif">EXPAN.</text>
+<line x1="52" y1="165" x2="52" y2="187" stroke="#f5a62355" stroke-width="1.5" stroke-dasharray="3,2"/>
+<text x="76" y="201" fill="#7b8296" font-size="7" font-family="sans-serif">absorbe la expansión</text>
+<text x="76" y="211" fill="#7b8296" font-size="7" font-family="sans-serif">del agua al calentar</text>
+<rect x="244" y="185" width="88" height="24" fill="#242938" rx="5" stroke="#7c6af740" stroke-width="1"/>
+<text x="288" y="196" text-anchor="middle" fill="#7c6af7" font-size="7.5" font-family="sans-serif">PRESOSTATO AGUA</text>
+<text x="288" y="206" text-anchor="middle" fill="#7b8296" font-size="7" font-family="sans-serif">normal: 1 – 1.5 bar</text>
+<line x1="288" y1="165" x2="288" y2="185" stroke="#7c6af755" stroke-width="1" stroke-dasharray="2,2"/>
+<rect x="8" y="236" width="12" height="4" fill="#f05a5a" rx="2"/>
+<text x="24" y="241" fill="#7b8296" font-size="7.5" font-family="sans-serif">agua caliente (ida)</text>
+<rect x="120" y="236" width="12" height="4" fill="#4f8ef7" rx="2"/>
+<text x="136" y="241" fill="#7b8296" font-size="7.5" font-family="sans-serif">agua fría (retorno)</text>
+</svg>`,
+
+c9: `<svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="340" height="260" fill="#1a1f2e" rx="10"/>
+<text x="170" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">COMPONENTES ELECTRÓNICOS</text>
+<rect x="110" y="90" width="120" height="80" fill="#242938" rx="8" stroke="#4f8ef760" stroke-width="2"/>
+<text x="170" y="113" text-anchor="middle" fill="#4f8ef7" font-size="10" font-weight="bold" font-family="sans-serif">PCB</text>
+<text x="170" y="127" text-anchor="middle" fill="#7b8296" font-size="7.5" font-family="sans-serif">placa electrónica</text>
+<text x="170" y="141" text-anchor="middle" fill="#7b8296" font-size="7.5" font-family="sans-serif">(cerebro de la caldera)</text>
+<text x="170" y="157" text-anchor="middle" fill="#4f8ef7" font-size="8" font-family="monospace">Lee · Decide · Controla</text>
+<rect x="8" y="28" width="88" height="22" fill="#242938" rx="5" stroke="#34c97a55" stroke-width="1"/>
+<text x="52" y="43" text-anchor="middle" fill="#34c97a" font-size="8" font-family="sans-serif">NTC Ida / Retorno</text>
+<line x1="96" y1="39" x2="110" y2="110" stroke="#34c97a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="8" y="64" width="88" height="22" fill="#242938" rx="5" stroke="#34c97a55" stroke-width="1"/>
+<text x="52" y="79" text-anchor="middle" fill="#34c97a" font-size="8" font-family="sans-serif">NTC Gases salida</text>
+<line x1="96" y1="75" x2="110" y2="115" stroke="#34c97a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="8" y="100" width="88" height="22" fill="#242938" rx="5" stroke="#f5a62355" stroke-width="1"/>
+<text x="52" y="115" text-anchor="middle" fill="#f5a623" font-size="8" font-family="sans-serif">Presostato agua</text>
+<line x1="96" y1="111" x2="110" y2="125" stroke="#f5a62355" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="8" y="136" width="88" height="22" fill="#242938" rx="5" stroke="#f5a62355" stroke-width="1"/>
+<text x="52" y="151" text-anchor="middle" fill="#f5a623" font-size="8" font-family="sans-serif">Presostato aire</text>
+<line x1="96" y1="147" x2="110" y2="140" stroke="#f5a62355" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="8" y="172" width="88" height="22" fill="#242938" rx="5" stroke="#c46af755" stroke-width="1"/>
+<text x="52" y="187" text-anchor="middle" fill="#c46af7" font-size="8" font-family="sans-serif">Electr. ionización</text>
+<line x1="96" y1="183" x2="110" y2="155" stroke="#c46af755" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="244" y="28" width="88" height="22" fill="#242938" rx="5" stroke="#f05a5a55" stroke-width="1"/>
+<text x="288" y="43" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="sans-serif">Válvula de gas</text>
+<line x1="244" y1="39" x2="230" y2="110" stroke="#f05a5a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="244" y="64" width="88" height="22" fill="#242938" rx="5" stroke="#f05a5a55" stroke-width="1"/>
+<text x="288" y="79" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="sans-serif">Ventilador</text>
+<line x1="244" y1="75" x2="230" y2="115" stroke="#f05a5a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="244" y="100" width="88" height="22" fill="#242938" rx="5" stroke="#f05a5a55" stroke-width="1"/>
+<text x="288" y="115" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="sans-serif">Bomba circuladora</text>
+<line x1="244" y1="111" x2="230" y2="125" stroke="#f05a5a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="244" y="136" width="88" height="22" fill="#242938" rx="5" stroke="#f05a5a55" stroke-width="1"/>
+<text x="288" y="151" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="sans-serif">Electr. encendido</text>
+<line x1="244" y1="147" x2="230" y2="140" stroke="#f05a5a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="244" y="172" width="88" height="22" fill="#242938" rx="5" stroke="#f05a5a55" stroke-width="1"/>
+<text x="288" y="187" text-anchor="middle" fill="#f05a5a" font-size="8" font-family="sans-serif">Válvula 3 vías</text>
+<line x1="244" y1="183" x2="230" y2="155" stroke="#f05a5a55" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="8" y="220" width="12" height="4" fill="#34c97a" rx="2"/>
+<text x="24" y="225" fill="#7b8296" font-size="7.5" font-family="sans-serif">sensores (entradas)</text>
+<rect x="130" y="220" width="12" height="4" fill="#f05a5a" rx="2"/>
+<text x="146" y="225" fill="#7b8296" font-size="7.5" font-family="sans-serif">actuadores (salidas)</text>
+<rect x="244" y="220" width="12" height="4" fill="#f5a623" rx="2"/>
+<text x="260" y="225" fill="#7b8296" font-size="7.5" font-family="sans-serif">presostatos</text>
+<text x="170" y="248" text-anchor="middle" fill="#ffffff15" font-size="7.5" font-family="monospace">Si un sensor da valor fuera de rango → código de error</text>
+</svg>`,
+
+c10: `<svg viewBox="0 0 320 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;display:block">
+<rect width="320" height="600" fill="#1a1f2e" rx="10"/>
+<text x="160" y="17" text-anchor="middle" fill="#7b8296" font-size="9" font-family="monospace" letter-spacing="1">CASCADA DE ARRANQUE</text>
+<rect x="20" y="24" width="280" height="52" fill="#242938" rx="8" stroke="#4f8ef735" stroke-width="1"/>
+<rect x="20" y="24" width="5" height="52" fill="#4f8ef7" rx="3"/>
+<text x="38" y="43" fill="#4f8ef7" font-size="9" font-family="monospace">01</text>
+<text x="56" y="43" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Demanda de calor</text>
+<text x="34" y="60" fill="#7b8296" font-size="8.5" font-family="sans-serif">Termostato o prioridad ACS activa la placa</text>
+<line x1="160" y1="76" x2="160" y2="91" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,89 160,97 165,89" fill="#ffffff20"/>
+<rect x="20" y="98" width="280" height="52" fill="#242938" rx="8" stroke="#4f8ef735" stroke-width="1"/>
+<rect x="20" y="98" width="5" height="52" fill="#4f8ef7" rx="3"/>
+<text x="38" y="117" fill="#4f8ef7" font-size="9" font-family="monospace">02</text>
+<text x="56" y="117" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Chequeo de seguridades</text>
+<text x="34" y="134" fill="#7b8296" font-size="8.5" font-family="sans-serif">Presión OK · sin sobrecalentamiento · sin errores</text>
+<line x1="160" y1="150" x2="160" y2="165" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,163 160,171 165,163" fill="#ffffff20"/>
+<rect x="20" y="172" width="280" height="52" fill="#242938" rx="8" stroke="#f5a62335" stroke-width="1"/>
+<rect x="20" y="172" width="5" height="52" fill="#f5a623" rx="3"/>
+<text x="38" y="191" fill="#f5a623" font-size="9" font-family="monospace">03</text>
+<text x="56" y="191" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Arranca el ventilador</text>
+<text x="34" y="208" fill="#7b8296" font-size="8.5" font-family="sans-serif">Pre-ventila la cámara de combustión</text>
+<line x1="160" y1="224" x2="160" y2="239" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,237 160,245 165,237" fill="#ffffff20"/>
+<rect x="20" y="246" width="280" height="52" fill="#242938" rx="8" stroke="#f5a62335" stroke-width="1"/>
+<rect x="20" y="246" width="5" height="52" fill="#f5a623" rx="3"/>
+<text x="38" y="265" fill="#f5a623" font-size="9" font-family="monospace">04</text>
+<text x="56" y="265" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Presostato de aire confirma</text>
+<text x="34" y="282" fill="#7b8296" font-size="8.5" font-family="sans-serif">Verifica que el ventilador gira · si NO → ERROR</text>
+<line x1="160" y1="298" x2="160" y2="313" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,311 160,319 165,311" fill="#ffffff20"/>
+<rect x="20" y="320" width="280" height="52" fill="#242938" rx="8" stroke="#f05a5a35" stroke-width="1"/>
+<rect x="20" y="320" width="5" height="52" fill="#f05a5a" rx="3"/>
+<text x="38" y="339" fill="#f05a5a" font-size="9" font-family="monospace">05</text>
+<text x="56" y="339" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Válvula de gas se abre</text>
+<text x="34" y="356" fill="#7b8296" font-size="8.5" font-family="sans-serif">La placa activa el solenoide · gas fluye al quemador</text>
+<line x1="160" y1="372" x2="160" y2="387" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,385 160,393 165,385" fill="#ffffff20"/>
+<rect x="20" y="394" width="280" height="52" fill="#242938" rx="8" stroke="#f05a5a35" stroke-width="1"/>
+<rect x="20" y="394" width="5" height="52" fill="#f05a5a" rx="3"/>
+<text x="38" y="413" fill="#f05a5a" font-size="9" font-family="monospace">06</text>
+<text x="56" y="413" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Chispa de encendido</text>
+<text x="34" y="430" fill="#7b8296" font-size="8.5" font-family="sans-serif">Electrodos generan chispa · gas enciende · llama</text>
+<line x1="160" y1="446" x2="160" y2="461" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,459 160,467 165,459" fill="#ffffff20"/>
+<rect x="20" y="468" width="280" height="52" fill="#242938" rx="8" stroke="#c46af735" stroke-width="1"/>
+<rect x="20" y="468" width="5" height="52" fill="#c46af7" rx="3"/>
+<text x="38" y="487" fill="#c46af7" font-size="9" font-family="monospace">07</text>
+<text x="56" y="487" fill="#e8eaf0" font-size="10.5" font-weight="bold" font-family="sans-serif">Ionización detecta llama</text>
+<text x="34" y="504" fill="#7b8296" font-size="8.5" font-family="sans-serif">Si no detecta en 3-5 seg → cierra gas · error de llama</text>
+<line x1="160" y1="520" x2="160" y2="535" stroke="#ffffff20" stroke-width="1.5"/>
+<polygon points="155,533 160,541 165,533" fill="#ffffff20"/>
+<rect x="20" y="542" width="280" height="46" fill="#34c97a12" rx="8" stroke="#34c97a55" stroke-width="1.5"/>
+<rect x="20" y="542" width="5" height="46" fill="#34c97a" rx="3"/>
+<text x="38" y="560" fill="#34c97a" font-size="9" font-family="monospace">08</text>
+<text x="56" y="560" fill="#34c97a" font-size="10.5" font-weight="bold" font-family="sans-serif">Caldera en operación ✓</text>
+<text x="34" y="577" fill="#34c97a" font-size="8.5" font-family="sans-serif">Bomba circula agua · modula potencia · regula temp.</text>
+</svg>`
+
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 const CLASSES = {
   1: {
     num: 1, mod: 1,
@@ -563,7 +851,8 @@ const CLASSES = {
       { type: 'text', body: `Una <strong>caldera</strong> es un equipo que calienta agua usando gas, y esa agua caliente se usa para dos cosas: calentar los ambientes de tu casa (calefacción) y tener agua caliente cuando abrís la canilla (agua caliente sanitaria).` },
       { type: 'text', body: `Es importante no confundirla con otros equipos similares:<br><br><strong>Calefón:</strong> solo calienta agua para la canilla, no tiene bomba ni radiadores.<br><strong>Termotanque:</strong> guarda agua caliente en un tanque, calienta lento y la mantiene lista.<br><strong>Caldera:</strong> calienta agua al instante y la hace circular por toda la casa para calefaccionar y también da agua caliente sanitaria.` },
       { type: 'text', body: `En Argentina las marcas más usadas en viviendas son <strong>Peisa</strong>, <strong>Caldaia</strong> y <strong>Baxi</strong>. Son los equipos con los que vas a trabajar como técnico.` },
-      { type: 'text', body: `El técnico de calderas es la persona que instala, revisa, diagnostica y repara estos equipos. Es un trabajo que combina conocimiento de gas, electricidad y agua al mismo tiempo.` }
+      { type: 'text', body: `El técnico de calderas es la persona que instala, revisa, diagnostica y repara estos equipos. Es un trabajo que combina conocimiento de gas, electricidad y agua al mismo tiempo.` },
+      { type: 'svg', body: DIAGRAMS.c1 }
     ],
     practica: { label: 'Actividad de la clase', text: 'Si tenés acceso a una caldera real o imágenes, identificá visualmente sus partes. Sin saber nada técnico todavía: ¿dónde entra el gas? ¿dónde entra el agua? ¿dónde sale? ¿qué cables ves? Anotá lo que observás.' }
   },
@@ -587,7 +876,8 @@ const CLASSES = {
       { type: 'text', body: `<strong>Calor y temperatura</strong> no son lo mismo. La temperatura es qué tan caliente está algo (la medís con un termómetro). El calor es energía que se transfiere de un cuerpo caliente a uno frío. Cuando metés la mano en agua caliente, el calor viaja del agua a tu mano, no al revés.` },
       { type: 'text', body: `<strong>La presión</strong> es la fuerza que ejerce el agua sobre las paredes de las cañerías. En una caldera doméstica la presión normal es entre 1 y 1.5 bar. Si la presión baja mucho, la caldera se apaga sola (es una medida de seguridad). Si sube demasiado, puede romperse algo.` },
       { type: 'text', body: `<strong>La combustión</strong> es la reacción química entre el gas y el oxígeno del aire que produce fuego y calor. Para que esa reacción sea segura y eficiente, se necesita la proporción correcta de gas y aire. Si hay demasiado gas y poco aire, la llama es amarilla y produce monóxido de carbono (venenoso). Si hay demasiado aire, la llama se apaga.` },
-      { type: 'text', body: `<strong>Transferencia de calor:</strong> el calor viaja de tres formas. Por <strong>conducción</strong> (de objeto a objeto en contacto: la olla en el fuego). Por <strong>convección</strong> (el agua caliente sube, la fría baja: así circula el agua en los radiadores). Por <strong>radiación</strong> (el sol nos calienta sin tocar nada). En una caldera se usan las tres.` }
+      { type: 'text', body: `<strong>Transferencia de calor:</strong> el calor viaja de tres formas. Por <strong>conducción</strong> (de objeto a objeto en contacto: la olla en el fuego). Por <strong>convección</strong> (el agua caliente sube, la fría baja: así circula el agua en los radiadores). Por <strong>radiación</strong> (el sol nos calienta sin tocar nada). En una caldera se usan las tres.` },
+      { type: 'svg', body: DIAGRAMS.c3 }
     ],
     practica: { label: 'Práctica de observación', text: 'Calentá agua en una olla sin tapa. Observá: ¿de dónde suben las burbujas primero? ¿Qué pasa cuando poné algo frío encima del vapor? ¿Podés sentir el calor sin tocar la olla? Identificá qué tipo de transferencia de calor estás viendo en cada caso.' }
   },
@@ -598,7 +888,8 @@ const CLASSES = {
     content: [
       { type: 'text', body: `Las calderas se clasifican por dos criterios principales: qué función cumplen y cómo funcionan internamente.<br><br><strong>Por función:</strong><br>• <strong>Solo calefacción:</strong> únicamente calientan los radiadores o el piso radiante.<br>• <strong>Dual o combi:</strong> hacen calefacción Y agua caliente sanitaria. Son las más comunes en Argentina.` },
       { type: 'text', body: `<strong>Por sistema de combustión y evacuación:</strong><br><br><strong>Atmosférica:</strong> toma el aire del ambiente para quemar y los gases salen por un caño hacia arriba. Es la más antigua y simple. Necesita buena ventilación del cuarto donde está instalada.<br><br><strong>Tiro balanceado:</strong> toma el aire del exterior y evacua los gases también hacia el exterior, por un caño doble (coaxial). Es más segura porque no usa el aire del cuarto.<br><br><strong>Condensación:</strong> la más eficiente. Aprovecha el calor del vapor de los gases que normalmente se desperdician. Llega a 109% de eficiencia (sí, más del 100%, porque recupera energía que antes se perdía).` },
-      { type: 'text', body: `Las Peisa, Caldaia y Baxi tienen modelos en todas estas categorías. Conocer el tipo es el primer paso para entender cómo funciona y cómo diagnosticar fallas.` }
+      { type: 'text', body: `Las Peisa, Caldaia y Baxi tienen modelos en todas estas categorías. Conocer el tipo es el primer paso para entender cómo funciona y cómo diagnosticar fallas.` },
+      { type: 'svg', body: DIAGRAMS.c4 }
     ],
     practica: { label: 'Actividad de la clase', text: 'Completá una tabla con tres columnas: atmosférica, tiro balanceado y condensación. Para cada una anotá: cómo toma el aire, cómo evacúa los gases, ventaja principal y desventaja principal.' }
   },
@@ -631,7 +922,8 @@ const CLASSES = {
     content: [
       { type: 'text', body: `El <strong>circuito hidráulico</strong> es el camino que recorre el agua dentro de la caldera y por toda la casa. Entender este recorrido es fundamental para diagnosticar problemas de circulación, presión y temperatura.` },
       { type: 'text', body: `<strong>Componentes principales:</strong><br><br><strong>Bomba circuladora:</strong> es el corazón del circuito hidráulico. Hace mover el agua por las cañerías y los radiadores. Si la bomba falla, el agua no circula y la caldera se sobrecalienta.<br><br><strong>Intercambiador de calor:</strong> es donde el agua absorbe el calor de la llama. Es como un radiador al revés: en vez de dar calor, lo toma. En calderas combi hay uno para calefacción y otro para agua sanitaria.` },
-      { type: 'text', body: `<strong>Válvula de tres vías:</strong> en calderas duales, decide si el agua va hacia los radiadores o hacia el circuito de agua caliente sanitaria. Es como un desvío en las vías del tren.<br><br><strong>Vaso de expansión:</strong> el agua al calentarse se expande. El vaso de expansión absorbe ese exceso de volumen para que la presión no suba demasiado. Si falla, la presión sube cada vez que enciende la caldera.<br><br><strong>Purgador automático:</strong> elimina el aire que se acumula en el circuito. El aire en las cañerías hace ruido, reduce la eficiencia y puede trabar la bomba.` }
+      { type: 'text', body: `<strong>Válvula de tres vías:</strong> en calderas duales, decide si el agua va hacia los radiadores o hacia el circuito de agua caliente sanitaria. Es como un desvío en las vías del tren.<br><br><strong>Vaso de expansión:</strong> el agua al calentarse se expande. El vaso de expansión absorbe ese exceso de volumen para que la presión no suba demasiado. Si falla, la presión sube cada vez que enciende la caldera.<br><br><strong>Purgador automático:</strong> elimina el aire que se acumula en el circuito. El aire en las cañerías hace ruido, reduce la eficiencia y puede trabar la bomba.` },
+      { type: 'svg', body: DIAGRAMS.c7 }
     ],
     practica: { label: 'Práctica Lab. 4 — circuito hidráulico', text: 'Con mangueras transparentes, una bomba pequeña y un recipiente con agua, armá un circuito cerrado. Observá cómo circula el agua. Luego introducí una burbuja de aire y observá qué pasa con la circulación. Discutí por qué esto sería un problema en un circuito de calefacción real.' }
   },
@@ -654,7 +946,8 @@ const CLASSES = {
     content: [
       { type: 'text', body: `La <strong>placa electrónica</strong> (PCB) es el cerebro de la caldera moderna. Lee todos los sensores, controla todos los actuadores, decide cuándo encender, cuándo apagar, cuándo dar error. Sin la placa, la caldera es solo una caja de metal.` },
       { type: 'text', body: `<strong>Sensores NTC:</strong> son resistencias que cambian su valor según la temperatura. NTC significa "coeficiente de temperatura negativo": cuando sube la temperatura, baja la resistencia. La caldera tiene varios: uno en el circuito de ida del agua, uno en el retorno, uno en los gases de salida. Si un sensor NTC da un valor fuera de rango, la caldera lo interpreta como falla y muestra un código de error.` },
-      { type: 'text', body: `<strong>Electrodo de ionización:</strong> detecta si hay llama. Cuando hay fuego, el electrodo conduce una pequeña corriente eléctrica a través de la llama. Si no detecta esa corriente, la placa cierra el gas (medida de seguridad).<br><br><strong>Presostato de agua:</strong> detecta si hay suficiente presión de agua en el circuito. Si la presión baja de 0.5 bar, la caldera no enciende.<br><br><strong>Presostato de aire:</strong> confirma que el ventilador está girando antes de abrir el gas.` }
+      { type: 'text', body: `<strong>Electrodo de ionización:</strong> detecta si hay llama. Cuando hay fuego, el electrodo conduce una pequeña corriente eléctrica a través de la llama. Si no detecta esa corriente, la placa cierra el gas (medida de seguridad).<br><br><strong>Presostato de agua:</strong> detecta si hay suficiente presión de agua en el circuito. Si la presión baja de 0.5 bar, la caldera no enciende.<br><br><strong>Presostato de aire:</strong> confirma que el ventilador está girando antes de abrir el gas.` },
+      { type: 'svg', body: DIAGRAMS.c9 }
     ],
     practica: { label: 'Práctica Lab. 2 — sensor NTC', text: 'Tomá un sensor NTC y medí su resistencia con el multímetro a temperatura ambiente. Anotá el valor. Sumergilo en agua caliente (no hirviendo) y medí nuevamente. ¿Bajó la resistencia? ¿Cuánto? Eso confirma que el sensor funciona. Si no cambia, el sensor está dañado.' }
   },
@@ -665,7 +958,8 @@ const CLASSES = {
     content: [
       { type: 'text', body: `La <strong>cascada de arranque</strong> es la secuencia de pasos que sigue la caldera cada vez que necesita encender. Si cualquier paso falla, la caldera se detiene y muestra un error. Por eso se llama "cascada": cada etapa depende de la anterior.` },
       { type: 'text', body: `<strong>La secuencia completa:</strong><br><br><strong>1. Demanda de calor:</strong> el termostato o la prioridad de agua caliente pide calor. La placa recibe la señal.<br><strong>2. Chequeo de seguridades:</strong> la placa verifica presión de agua (¿hay agua?), presostato de aire (¿el ventilador puede arrancar?), temperatura (¿no está sobrecalentada?).<br><strong>3. Arranca el ventilador:</strong> primero ventila la cámara de combustión por unos segundos para limpiar cualquier resto de gas.<br><strong>4. El presostato de aire cierra:</strong> confirma que el ventilador gira. Si no cierra, la caldera no sigue.<br><strong>5. La placa abre la válvula de gas:</strong> el gas empieza a fluir.<br><strong>6. Chispa:</strong> los electrodos generan chispa para encender el gas.<br><strong>7. El electrodo de ionización detecta la llama:</strong> si en 3-5 segundos no hay llama, la placa cierra el gas y da error.<br><strong>8. Circulación de agua:</strong> la bomba empieza a circular el agua.` },
-      { type: 'text', body: `<strong>Para el técnico</strong>, esta cascada es un mapa de diagnóstico. Si la caldera falla, la pregunta es: ¿hasta qué etapa llegó? Eso reduce el problema a un componente específico.` }
+      { type: 'text', body: `<strong>Para el técnico</strong>, esta cascada es un mapa de diagnóstico. Si la caldera falla, la pregunta es: ¿hasta qué etapa llegó? Eso reduce el problema a un componente específico.` },
+      { type: 'svg', body: DIAGRAMS.c10 }
     ],
     practica: { label: 'Actividad de la clase', text: 'Sin mirar las notas, dibujá la cascada de arranque de memoria. Luego el docente plantea: "La caldera arranca el ventilador pero nunca enciende la llama". ¿En qué etapas puede estar la falla? Lista al menos 3 causas posibles y cómo verificarías cada una.' }
   },
@@ -1014,7 +1308,11 @@ function openClass(classId) {
   html += '</div>';
   html += '<div class="class-section"><div class="class-section-title">Contenido de la clase</div>';
   cls.content.forEach(block => {
-    html += `<div class="content-block"><p>${block.body}</p></div>`;
+    if (block.type === 'svg') {
+      html += `<div class="content-block svg-block">${block.body}</div>`;
+    } else {
+      html += `<div class="content-block"><p>${block.body}</p></div>`;
+    }
   });
   html += '</div>';
   if (cls.practica) {
