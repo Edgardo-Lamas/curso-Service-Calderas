@@ -105,6 +105,13 @@ body {
 .splash-form input::placeholder { color: var(--muted); }
 .splash-form .field + .field { margin-top: 10px; }
 .splash-error { font-size: 0.8rem; color: var(--danger); margin-bottom: 10px; display: none; }
+.btn-user-change {
+  background: none; border: none; color: var(--muted);
+  font-size: 0.75rem; cursor: pointer; padding: 4px 8px;
+  border-radius: 6px; font-family: 'IBM Plex Mono', monospace;
+  transition: color .2s;
+}
+.btn-user-change:hover { color: var(--text); }
 
 /* ── HOME ── */
 #home { background: var(--bg); }
@@ -425,11 +432,14 @@ body {
 <!-- HOME -->
 <div id="home" class="screen">
   <div class="topbar">
-    <div>
+    <div onclick="devTap()" style="cursor:default;user-select:none">
       <div class="topbar-title">Calderas</div>
-      <div class="topbar-sub">Servicio Técnico Residencial</div>
+      <div class="topbar-sub" id="home-alumno-sub">Servicio Técnico Residencial</div>
     </div>
-    <div class="progress-pill" id="home-prog-pill">0/16</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-user-change" id="btn-cambiar-usuario" onclick="cambiarUsuario()" style="display:none">⇄ cambiar</button>
+      <div class="progress-pill" id="home-prog-pill">0/16</div>
+    </div>
   </div>
   <div class="home-content">
     <div class="overall-progress">
@@ -899,6 +909,29 @@ function goHome() {
   showScreen('home');
 }
 
+let _devTaps = 0, _devTimer = null;
+function devTap() {
+  _devTaps++;
+  clearTimeout(_devTimer);
+  _devTimer = setTimeout(() => { _devTaps = 0; }, 2000);
+  if (_devTaps >= 5) {
+    _devTaps = 0;
+    document.getElementById('btn-cambiar-usuario').style.display = 'block';
+  }
+}
+
+function cambiarUsuario() {
+  localStorage.removeItem('calderas_alumno');
+  localStorage.removeItem('calderas_progress');
+  const n = document.getElementById('input-nombre');
+  const e = document.getElementById('input-email');
+  if (n) n.value = '';
+  if (e) e.value = '';
+  const err = document.getElementById('splash-error');
+  if (err) err.style.display = 'none';
+  showScreen('splash');
+}
+
 function renderHome() {
   const done = countComplete();
   const total = 16;
@@ -906,6 +939,9 @@ function renderHome() {
   document.getElementById('home-prog-pill').textContent = done+'/'+total;
   document.getElementById('overall-bar').style.width = pct+'%';
   document.getElementById('overall-text').textContent = done + ' de ' + total + ' clases completadas · ' + pct + '%';
+  const alumno = getAlumno();
+  const sub = document.getElementById('home-alumno-sub');
+  if (sub) sub.textContent = alumno ? alumno.nombre : 'Servicio Técnico Residencial';
 
   const wrap = document.getElementById('modules-home');
   wrap.innerHTML = '';
