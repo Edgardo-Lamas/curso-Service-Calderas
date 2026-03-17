@@ -1160,6 +1160,7 @@ function sendToSheets(classId, correct, total, pct, passed) {
   const payload = {
     nombre: alumno.nombre,
     email: alumno.email,
+    claseNum: classId,
     clase: 'Clase ' + classId + ' — ' + clase,
     correctas: correct,
     total: total,
