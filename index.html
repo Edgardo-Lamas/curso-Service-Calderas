@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1f2e">
+<meta name="description" content="Curso de Servicio Técnico de Calderas Residenciales">
+<link rel="manifest" href="manifest.json">
+<title>Calderas — Servicio Técnico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #1a1f2e;
+  --bg3: #242938;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #e8eaf0;
+  --muted: #7b8296;
+  --accent: #4f8ef7;
+  --accent2: #7c6af7;
+  --success: #34c97a;
+  --warn: #f5a623;
+  --danger: #f05a5a;
+  --m1: #4f8ef7;
+  --m2: #34c97a;
+  --m3: #f5a623;
+  --m4: #c46af7;
+  --m5: #f06a4a;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { font-size: 16px; }
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+/* ── SCREENS ── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── SPLASH ── */
+#splash {
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 2rem;
+}
+.splash-inner { text-align: center; max-width: 340px; }
+.splash-icon {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, #4f8ef7 0%, #7c6af7 100%);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 32px;
+}
+.splash h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+.splash p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem; }
+.splash-meta { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap; }
+.splash-meta span {
+  font-size: 0.75rem; color: var(--muted);
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 4px 12px; border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.btn-primary {
+  width: 100%; padding: 14px;
+  background: var(--accent);
+  color: #fff; font-weight: 600; font-size: 1rem;
+  border: none; border-radius: var(--radius);
+  cursor: pointer; transition: opacity .2s, transform .1s;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+.btn-secondary {
+  width: 100%; padding: 13px;
+  background: transparent;
+  color: var(--text); font-size: 0.9rem;
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  cursor: pointer; transition: background .2s;
+  font-family: 'IBM Plex Sans', sans-serif;
+  margin-top: 10px;
+}
+.btn-secondary:active { background: var(--bg3); }
+
+/* ── HOME ── */
+#home { background: var(--bg); }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-title { font-size: 1rem; font-weight: 600; }
+.topbar-sub { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.progress-pill {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 0.75rem; font-family: 'IBM Plex Mono', monospace;
+  color: var(--accent);
+}
+.home-content { padding: 20px; flex: 1; }
+.section-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.overall-progress { margin-bottom: 28px; }
+.prog-bar-wrap {
+  background: var(--bg3); border-radius: 4px;
+  height: 6px; margin: 8px 0 6px; overflow: hidden;
+}
+.prog-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width .6s ease;
+}
+.prog-text { font-size: 0.8rem; color: var(--muted); }
+
+/* Module cards */
+.module-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.module-card:active { border-color: var(--border2); }
+.module-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px;
+}
+.module-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.module-info { flex: 1; }
+.module-name { font-size: 0.95rem; font-weight: 500; }
+.module-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.module-badge {
+  font-size: 0.7rem; font-family: 'IBM Plex Mono', monospace;
+  color: var(--muted); background: var(--bg3);
+  padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+}
+.module-prog-bar { height: 3px; background: var(--bg3); }
+.module-prog-fill { height: 100%; transition: width .5s ease; }
+
+/* Lab card */
+.lab-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 14px;
+  transition: border-color .2s;
+}
+.lab-card:active { border-color: var(--border2); }
+.lab-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--bg3); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.lab-info .lab-name { font-size: 0.95rem; font-weight: 500; }
+.lab-info .lab-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.coming-soon {
+  font-size: 0.7rem; background: var(--bg3);
+  color: var(--warn); border: 1px solid rgba(245,166,35,.3);
+  padding: 2px 8px; border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace; margin-left: auto; flex-shrink: 0;
+}
+
+/* ── MODULE LIST ── */
+#module-list { background: var(--bg); }
+.back-btn {
+  background: none; border: none; color: var(--accent);
+  font-size: 0.9rem; cursor: pointer; padding: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  display: flex; align-items: center; gap: 6px;
+}
+.class-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.class-item:active { background: var(--bg3); }
+.class-num {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 8px; background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-family: 'IBM Plex Mono', monospace;
+  color: var(--muted);
+}
+.class-num.done { background: rgba(52,201,122,.15); color: var(--success); }
+.class-num.active-cls { background: rgba(79,142,247,.15); color: var(--accent); }
+.class-body { flex: 1; }
+.class-title-sm { font-size: 0.9rem; font-weight: 500; }
+.class-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.class-arrow { color: var(--muted); font-size: 1rem; }
+
+/* ── CLASS VIEW ── */
+#class-view { background: var(--bg); }
+.class-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 10;
+}
+.class-content { padding: 20px; flex: 1; overflow-y: auto; }
+.class-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; padding: 4px 10px;
+  border-radius: 20px; margin-bottom: 12px;
+  font-family: 'IBM Plex Mono', monospace; font-weight: 500;
+}
+.class-main-title { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.3; }
+.class-section { margin-bottom: 24px; }
+.class-section-title {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace;
+}
+.content-block {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  margin-bottom: 8px;
+  font-size: 0.9rem; line-height: 1.65; color: var(--text);
+}
+.content-block p { margin-bottom: 10px; }
+.content-block p:last-child { margin-bottom: 0; }
+.content-block ul { padding-left: 18px; }
+.content-block li { margin-bottom: 6px; }
+.content-block strong { color: var(--accent); font-weight: 500; }
+
+.tag-pill {
+  display: inline-block; font-size: 0.72rem;
+  padding: 3px 10px; border-radius: 20px; margin: 3px 3px 3px 0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.tag-teoria { background: rgba(79,142,247,.15); color: #7fb3ff; border: 1px solid rgba(79,142,247,.3); }
+.tag-practica { background: rgba(52,201,122,.15); color: #5ddca0; border: 1px solid rgba(52,201,122,.3); }
+.tag-seguridad { background: rgba(245,166,35,.15); color: #f7c060; border: 1px solid rgba(245,166,35,.3); }
+.tag-diagnostico { background: rgba(240,90,90,.15); color: #f58585; border: 1px solid rgba(240,90,90,.3); }
+
+.practica-block {
+  background: rgba(52,201,122,.07);
+  border: 1px solid rgba(52,201,122,.2);
+  border-radius: var(--radius); padding: 14px; margin-top: 10px;
+}
+.practica-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--success);
+  margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace;
+}
+.practica-text { font-size: 0.88rem; line-height: 1.6; color: #a8e8c8; }
+
+.class-nav {
+  display: flex; gap: 10px; padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.nav-btn {
+  flex: 1; padding: 12px;
+  border-radius: var(--radius); font-size: 0.9rem; font-weight: 500;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--text); cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: background .15s;
+}
+.nav-btn:active { background: var(--bg3); }
+.nav-btn.complete-btn {
+  background: var(--success); color: #fff; border-color: transparent;
+}
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ── QUIZ ── */
+#quiz-view { background: var(--bg); }
+.quiz-content { padding: 20px; flex: 1; }
+.quiz-progress { margin-bottom: 20px; }
+.quiz-q-num {
+  font-size: 0.75rem; color: var(--muted); margin-bottom: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.quiz-question { font-size: 1.05rem; font-weight: 500; line-height: 1.5; margin-bottom: 20px; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-opt {
+  padding: 14px 16px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer;
+  font-size: 0.9rem; line-height: 1.5;
+  transition: border-color .15s, background .15s;
+  text-align: left; color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.quiz-opt:active:not(:disabled) { background: var(--bg3); }
+.quiz-opt.selected { border-color: var(--accent); background: rgba(79,142,247,.1); }
+.quiz-opt.correct { border-color: var(--success); background: rgba(52,201,122,.12); color: #5ddca0; }
+.quiz-opt.wrong { border-color: var(--danger); background: rgba(240,90,90,.1); color: #f58585; }
+.quiz-opt:disabled { cursor: default; }
+.quiz-feedback {
+  margin-top: 16px; padding: 14px;
+  border-radius: var(--radius); font-size: 0.88rem; line-height: 1.6;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(52,201,122,.1); border: 1px solid rgba(52,201,122,.25); color: #5ddca0; }
+.quiz-feedback.fail { background: rgba(240,90,90,.08); border: 1px solid rgba(240,90,90,.2); color: #f08585; }
+.quiz-nav { padding: 16px 20px; border-top: 1px solid var(--border); }
+
+/* Quiz result */
+.quiz-result { text-align: center; padding: 40px 20px; }
+.result-score {
+  font-size: 3.5rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 8px;
+}
+.result-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
+.result-msg { font-size: 0.9rem; line-height: 1.6; margin-bottom: 28px; color: var(--text); }
+
+/* ── LAB PLACEHOLDER ── */
+#lab-view { background: var(--bg); }
+.lab-placeholder {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.lab-ph-icon {
+  width: 80px; height: 80px; border-radius: 20px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 20px;
+}
+.lab-ph-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; }
+.lab-ph-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; max-width: 300px; margin-bottom: 20px; }
+.lab-ph-badge {
+  display: inline-block; font-size: 0.75rem;
+  background: rgba(245,166,35,.1); color: var(--warn);
+  border: 1px solid rgba(245,166,35,.3);
+  padding: 6px 16px; border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+
+/* ── Install banner ── */
+#install-banner {
+  display: none;
+  background: var(--bg3); border-top: 1px solid var(--border);
+  padding: 12px 20px; align-items: center; gap: 12px;
+  font-size: 0.85rem;
+}
+#install-banner.show { display: flex; }
+#install-banner span { flex: 1; color: var(--muted); }
+#install-btn {
+  background: var(--accent); color: #fff; border: none;
+  padding: 8px 16px; border-radius: 8px; font-size: 0.8rem;
+  cursor: pointer; white-space: nowrap;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="screen active">
+  <div class="splash-inner">
+    <div class="splash-icon">🔥</div>
+    <h1>Servicio Técnico<br>de Calderas</h1>
+    <p>Curso completo para técnicos residenciales. Peisa · Caldaia · Baxi</p>
+    <div class="splash-meta">
+      <span>16 clases</span>
+      <span>70 min c/u</span>
+      <span>5 módulos</span>
+    </div>
+    <button class="btn-primary" onclick="goHome()">Comenzar curso</button>
+    <button class="btn-secondary" onclick="goHome()">Continuar donde dejé</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="screen">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Calderas</div>
+      <div class="topbar-sub">Servicio Técnico Residencial</div>
+    </div>
+    <div class="progress-pill" id="home-prog-pill">0/16</div>
+  </div>
+  <div class="home-content">
+    <div class="overall-progress">
+      <div class="section-label">Tu progreso</div>
+      <div class="prog-bar-wrap"><div class="prog-bar-fill" id="overall-bar" style="width:0%"></div></div>
+      <div class="prog-text" id="overall-text">0 de 16 clases completadas</div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:14px">Módulos del curso</div>
+
+    <div id="modules-home"></div>
+
+    <div class="section-label" style="margin:20px 0 12px">Laboratorio de diagnóstico</div>
+    <div class="lab-card" onclick="showLab()">
+      <div class="lab-icon">⚡</div>
+      <div class="lab-info">
+        <div class="lab-name">Cascada de funcionamiento</div>
+        <div class="lab-sub">Simulador interactivo de fallas</div>
+      </div>
+      <div class="coming-soon">Próx.</div>
+    </div>
+  </div>
+  <div id="install-banner">
+    <span>Instalá la app para usarla sin internet</span>
+    <button id="install-btn" onclick="installApp()">Instalar</button>
+  </div>
+</div>
+
+<!-- MODULE LIST -->
+<div id="module-list" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('home')">← Inicio</button>
+    <div id="mod-list-badge" class="progress-pill"></div>
+  </div>
+  <div style="padding:20px 20px 12px">
+    <div class="section-label" id="mod-list-label"></div>
+    <div style="font-size:1.1rem;font-weight:600;margin-bottom:4px" id="mod-list-title"></div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.5" id="mod-list-desc"></div>
+  </div>
+  <div id="class-list-items"></div>
+</div>
+
+<!-- CLASS VIEW -->
+<div id="class-view" class="screen">
+  <div class="class-topbar">
+    <button class="back-btn" onclick="backToModule()">← Módulo</button>
+    <div id="class-nav-pill" class="progress-pill"></div>
+  </div>
+  <div class="class-content" id="class-content-area"></div>
+  <div class="class-nav">
+    <button class="nav-btn" id="prev-btn" onclick="prevClass()">← Anterior</button>
+    <button class="nav-btn complete-btn" id="complete-btn" onclick="completeAndQuiz()">Completar y evaluar →</button>
+    <button class="nav-btn" id="next-btn" onclick="nextClass()" style="display:none">→ Siguiente</button>
+  </div>
+</div>
+
+<!-- QUIZ VIEW -->
+<div id="quiz-view" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('class-view')">← Clase</button>
+    <div id="quiz-pill" class="progress-pill"></div>
+  </div>
+  <div class="quiz-content" id="quiz-content-area"></div>
+  <div class="quiz-nav" id="quiz-nav-area"></div>
+</div>
+
+<!-- LAB VIEW -->
+<div id="lab-view" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('home')">← Inicio</button>
+    <div class="progress-pill">Lab</div>
+  </div>
+  <div class="lab-placeholder">
+    <div class="lab-ph-icon">🔧</div>
+    <div class="lab-ph-title">Simulador de cascada</div>
+    <div class="lab-ph-desc">El diagrama interactivo de cascada de funcionamiento estará disponible próximamente. Podrás provocar fallas en cada etapa y diagnosticar el problema.</div>
+    <div class="lab-ph-badge">En desarrollo · Próxima actualización</div>
+  </div>
+</div>
+
+<script>
+const MODULES = [
+  {
+    id: 1, color: 'var(--m1)',
+    name: 'Historia, contexto y fundamentos',
+    sub: 'Orígenes, física básica y principios',
+    classes: [1,2,3]
+  },
+  {
+    id: 2, color: 'var(--m2)',
+    name: 'Tipos de calderas y combustión',
+    sub: 'Clasificación, quemadores y evacuación',
+    classes: [4,5,6]
+  },
+  {
+    id: 3, color: 'var(--m3)',
+    name: 'Componentes internos',
+    sub: 'Hidráulica, gas y electrónica',
+    classes: [7,8,9]
+  },
+  {
+    id: 4, color: 'var(--m4)',
+    name: 'Funcionamiento y medición',
+    sub: 'Cascada de arranque e instrumentos',
+    classes: [10,11,12]
+  },
+  {
+    id: 5, color: 'var(--m5)',
+    name: 'Seguridad, mantenimiento y fallas',
+    sub: 'Protocolos, códigos de error y taller',
+    classes: [13,14,15,16]
+  }
+];
+
+const CLASSES = {
+  1: {
+    num: 1, mod: 1,
+    title: '¿Qué es una caldera y para qué sirve?',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `Una <strong>caldera</strong> es un equipo que calienta agua usando gas, y esa agua caliente se usa para dos cosas: calentar los ambientes de tu casa (calefacción) y tener agua caliente cuando abrís la canilla (agua caliente sanitaria).` },
+      { type: 'text', body: `Es importante no confundirla con otros equipos similares:<br><br><strong>Calefón:</strong> solo calienta agua para la canilla, no tiene bomba ni radiadores.<br><strong>Termotanque:</strong> guarda agua caliente en un tanque, calienta lento y la mantiene lista.<br><strong>Caldera:</strong> calienta agua al instante y la hace circular por toda la casa para calefaccionar y también da agua caliente sanitaria.` },
+      { type: 'text', body: `En Argentina las marcas más usadas en viviendas son <strong>Peisa</strong>, <strong>Caldaia</strong> y <strong>Baxi</strong>. Son los equipos con los que vas a trabajar como técnico.` },
+      { type: 'text', body: `El técnico de calderas es la persona que instala, revisa, diagnostica y repara estos equipos. Es un trabajo que combina conocimiento de gas, electricidad y agua al mismo tiempo.` }
+    ],
+    practica: { label: 'Actividad de la clase', text: 'Si tenés acceso a una caldera real o imágenes, identificá visualmente sus partes. Sin saber nada técnico todavía: ¿dónde entra el gas? ¿dónde entra el agua? ¿dónde sale? ¿qué cables ves? Anotá lo que observás.' }
+  },
+  2: {
+    num: 2, mod: 1,
+    title: 'Historia y evolución de las calderas',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `Las primeras calderas aparecieron en el siglo XIX para calentar edificios grandes y fábricas. Eran de <strong>hierro fundido</strong>, enormes y peligrosas: funcionaban con carbón, tenían alta presión y muchas explotaban.` },
+      { type: 'text', body: `En el siglo XX llegó el <strong>gas natural</strong> a las ciudades. Las calderas se volvieron más pequeñas y empezaron a entrar en las casas. Pero seguían siendo sistemas "todo o nada": o calentaban al máximo o estaban apagadas.` },
+      { type: 'text', body: `A partir de los años 90, llegó la <strong>electrónica</strong>. Las placas electrónicas reemplazaron a los sistemas mecánicos simples. La caldera ahora "piensa": lee sensores, controla la llama, ajusta la potencia y detecta fallas automáticamente.` },
+      { type: 'text', body: `Hoy las calderas modernas tienen <strong>modulación</strong> (ajustan su potencia según lo que se necesita), <strong>condensación</strong> (aprovechan hasta el vapor para no desperdiciar energía) y se conectan con termostatos inteligentes. Son hasta un 30% más eficientes que las de hace 20 años.` }
+    ],
+    practica: { label: 'Actividad de la clase', text: 'Dibujá en tu cuaderno una línea de tiempo con al menos 4 momentos clave en la evolución de las calderas. Para cada momento anotá: qué cambió y por qué fue importante ese cambio para la seguridad o la eficiencia.' }
+  },
+  3: {
+    num: 3, mod: 1,
+    title: 'Principios físicos explicados sin fórmulas',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `<strong>Calor y temperatura</strong> no son lo mismo. La temperatura es qué tan caliente está algo (la medís con un termómetro). El calor es energía que se transfiere de un cuerpo caliente a uno frío. Cuando metés la mano en agua caliente, el calor viaja del agua a tu mano, no al revés.` },
+      { type: 'text', body: `<strong>La presión</strong> es la fuerza que ejerce el agua sobre las paredes de las cañerías. En una caldera doméstica la presión normal es entre 1 y 1.5 bar. Si la presión baja mucho, la caldera se apaga sola (es una medida de seguridad). Si sube demasiado, puede romperse algo.` },
+      { type: 'text', body: `<strong>La combustión</strong> es la reacción química entre el gas y el oxígeno del aire que produce fuego y calor. Para que esa reacción sea segura y eficiente, se necesita la proporción correcta de gas y aire. Si hay demasiado gas y poco aire, la llama es amarilla y produce monóxido de carbono (venenoso). Si hay demasiado aire, la llama se apaga.` },
+      { type: 'text', body: `<strong>Transferencia de calor:</strong> el calor viaja de tres formas. Por <strong>conducción</strong> (de objeto a objeto en contacto: la olla en el fuego). Por <strong>convección</strong> (el agua caliente sube, la fría baja: así circula el agua en los radiadores). Por <strong>radiación</strong> (el sol nos calienta sin tocar nada). En una caldera se usan las tres.` }
+    ],
+    practica: { label: 'Práctica de observación', text: 'Calentá agua en una olla sin tapa. Observá: ¿de dónde suben las burbujas primero? ¿Qué pasa cuando poné algo frío encima del vapor? ¿Podés sentir el calor sin tocar la olla? Identificá qué tipo de transferencia de calor estás viendo en cada caso.' }
+  },
+  4: {
+    num: 4, mod: 2,
+    title: 'Tipos de calderas: clasificación y diferencias',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `Las calderas se clasifican por dos criterios principales: qué función cumplen y cómo funcionan internamente.<br><br><strong>Por función:</strong><br>• <strong>Solo calefacción:</strong> únicamente calientan los radiadores o el piso radiante.<br>• <strong>Dual o combi:</strong> hacen calefacción Y agua caliente sanitaria. Son las más comunes en Argentina.` },
+      { type: 'text', body: `<strong>Por sistema de combustión y evacuación:</strong><br><br><strong>Atmosférica:</strong> toma el aire del ambiente para quemar y los gases salen por un caño hacia arriba. Es la más antigua y simple. Necesita buena ventilación del cuarto donde está instalada.<br><br><strong>Tiro balanceado:</strong> toma el aire del exterior y evacua los gases también hacia el exterior, por un caño doble (coaxial). Es más segura porque no usa el aire del cuarto.<br><br><strong>Condensación:</strong> la más eficiente. Aprovecha el calor del vapor de los gases que normalmente se desperdician. Llega a 109% de eficiencia (sí, más del 100%, porque recupera energía que antes se perdía).` },
+      { type: 'text', body: `Las Peisa, Caldaia y Baxi tienen modelos en todas estas categorías. Conocer el tipo es el primer paso para entender cómo funciona y cómo diagnosticar fallas.` }
+    ],
+    practica: { label: 'Actividad de la clase', text: 'Completá una tabla con tres columnas: atmosférica, tiro balanceado y condensación. Para cada una anotá: cómo toma el aire, cómo evacúa los gases, ventaja principal y desventaja principal.' }
+  },
+  5: {
+    num: 5, mod: 2,
+    title: 'Quemadores: tipos y partes',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `El <strong>quemador</strong> es el corazón de la caldera. Es donde se mezcla el gas con el aire y se produce la llama que calienta el agua.` },
+      { type: 'text', body: `<strong>Tipos de quemadores:</strong><br><br><strong>Atmosférico:</strong> simple, sin ventilador. El gas sale por pequeños agujeros y se mezcla con el aire naturalmente. La llama es fija, no cambia de intensidad. Se ve en calderas viejas.<br><br><strong>Premezcla:</strong> el gas y el aire se mezclan antes de llegar al quemador. La combustión es más limpia y eficiente.<br><br><strong>Modulante:</strong> puede variar su potencia entre un mínimo y un máximo según lo que necesita la caldera. Es el más moderno y eficiente.` },
+      { type: 'text', body: `<strong>Partes principales del sistema de quemado:</strong><br><br>• <strong>Válvula de gas:</strong> abre y cierra el paso del gas. Es controlada electrónicamente.<br>• <strong>Rampa de gas:</strong> distribuye el gas uniformemente al quemador.<br>• <strong>Inyectores:</strong> pequeños agujeros calibrados por donde sale el gas a presión controlada.<br>• <strong>Electrodos de encendido:</strong> generan la chispa que enciende la llama.` }
+    ],
+    practica: { label: 'Práctica de reconocimiento', text: 'Sobre un quemador real o una imagen detallada, identificá y señalá: los inyectores, los electrodos, la rampa de gas. Explicá con tus propias palabras qué haría si uno de esos componentes estuviera dañado.' }
+  },
+  6: {
+    num: 6, mod: 2,
+    title: 'Evacuación de gases: ductos y sistemas',
+    tags: ['teoria', 'seguridad'],
+    content: [
+      { type: 'text', body: `Cuando la caldera quema gas, produce gases de combustión que contienen vapor de agua, dióxido de carbono y otros compuestos. Esos gases <strong>tienen que salir al exterior</strong>. Si no salen, se acumulan en el ambiente y pueden intoxicar a las personas.` },
+      { type: 'text', body: `<strong>Sistemas de evacuación:</strong><br><br><strong>Tiro natural:</strong> los gases calientes suben solos por el caño (el calor es más liviano que el aire frío). Funciona por física básica. Requiere que el caño esté bien construido y sin obstrucciones.<br><br><strong>Tiro balanceado:</strong> usa un caño doble. Por el interior salen los gases quemados, por el exterior entra el aire fresco para quemar. El ventilador de la caldera impulsa ambos flujos.<br><br><strong>Ventilado (coaxial):</strong> similar al tiro balanceado, sale lateralmente por la pared.<br><br><strong>Condensación:</strong> los gases salen a baja temperatura (50-60°C) por caños de plástico resistente, no metálicos.` },
+      { type: 'text', body: `<strong>El ventilador (turbina)</strong> y el <strong>presostato de aire</strong> son clave: el ventilador extrae los gases, y el presostato verifica que esté funcionando antes de abrir el gas. Si el ventilador falla o hay un ducto tapado, la caldera se bloquea automáticamente.` }
+    ],
+    practica: { label: 'Actividad', text: 'En diagramas de los tres sistemas (tiro natural, tiro balanceado, condensación), trazá con colores diferentes: rojo para donde salen los gases calientes, azul para donde entra el aire fresco. Identificá dónde está el ventilador en cada caso.' }
+  },
+  7: {
+    num: 7, mod: 3,
+    title: 'Circuito hidráulico: el recorrido del agua',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `El <strong>circuito hidráulico</strong> es el camino que recorre el agua dentro de la caldera y por toda la casa. Entender este recorrido es fundamental para diagnosticar problemas de circulación, presión y temperatura.` },
+      { type: 'text', body: `<strong>Componentes principales:</strong><br><br><strong>Bomba circuladora:</strong> es el corazón del circuito hidráulico. Hace mover el agua por las cañerías y los radiadores. Si la bomba falla, el agua no circula y la caldera se sobrecalienta.<br><br><strong>Intercambiador de calor:</strong> es donde el agua absorbe el calor de la llama. Es como un radiador al revés: en vez de dar calor, lo toma. En calderas combi hay uno para calefacción y otro para agua sanitaria.` },
+      { type: 'text', body: `<strong>Válvula de tres vías:</strong> en calderas duales, decide si el agua va hacia los radiadores o hacia el circuito de agua caliente sanitaria. Es como un desvío en las vías del tren.<br><br><strong>Vaso de expansión:</strong> el agua al calentarse se expande. El vaso de expansión absorbe ese exceso de volumen para que la presión no suba demasiado. Si falla, la presión sube cada vez que enciende la caldera.<br><br><strong>Purgador automático:</strong> elimina el aire que se acumula en el circuito. El aire en las cañerías hace ruido, reduce la eficiencia y puede trabar la bomba.` }
+    ],
+    practica: { label: 'Práctica Lab. 4 — circuito hidráulico', text: 'Con mangueras transparentes, una bomba pequeña y un recipiente con agua, armá un circuito cerrado. Observá cómo circula el agua. Luego introducí una burbuja de aire y observá qué pasa con la circulación. Discutí por qué esto sería un problema en un circuito de calefacción real.' }
+  },
+  8: {
+    num: 8, mod: 3,
+    title: 'Componentes de gas: válvulas, rampa e inyectores',
+    tags: ['teoria', 'seguridad'],
+    content: [
+      { type: 'text', body: `Todo lo relacionado con el gas en una caldera está diseñado con <strong>múltiples sistemas de seguridad</strong>. Un error en el circuito de gas puede ser fatal. Por eso es fundamental entender cómo funciona antes de tocarlo.` },
+      { type: 'text', body: `<strong>Válvula de gas:</strong> es la pieza que controla el paso del gas al quemador. Es electrónica: recibe una señal de la placa y se abre o cierra en milisegundos. Tiene una válvula principal y una de seguridad. Si cualquiera de las dos falla, la caldera no enciende (por diseño, la falla siempre deja la válvula cerrada, no abierta).` },
+      { type: 'text', body: `<strong>Rampa de gas:</strong> distribuye el gas desde la válvula hasta el quemador de manera uniforme. Tiene reguladores de presión que aseguran que el gas llegue siempre a la misma presión, independientemente de la presión de la red.<br><br><strong>Inyectores:</strong> son pequeños orificios calibrados con precisión. El diámetro del inyector determina cuánto gas pasa. Si un inyector está sucio o tapado, esa parte del quemador no enciende.` },
+      { type: 'text', body: `<strong>Presión de gas:</strong> en Argentina, el gas natural de red llega a las casas a baja presión (aprox. 20 mbar). La caldera tiene un regulador interno para ajustar esa presión al nivel exacto que necesita el quemador. Medir la presión de gas es parte del mantenimiento anual.` }
+    ],
+    practica: { label: 'Actividad', text: 'Sobre una válvula de gas usada (fuera de servicio), identificá: la entrada de gas, la salida hacia el quemador, los conectores eléctricos del solenoide. ¿Por qué creés que tiene dos solenoides en vez de uno? ¿Qué ventaja de seguridad da eso?' }
+  },
+  9: {
+    num: 9, mod: 3,
+    title: 'Componentes electrónicos: la inteligencia de la caldera',
+    tags: ['teoria'],
+    content: [
+      { type: 'text', body: `La <strong>placa electrónica</strong> (PCB) es el cerebro de la caldera moderna. Lee todos los sensores, controla todos los actuadores, decide cuándo encender, cuándo apagar, cuándo dar error. Sin la placa, la caldera es solo una caja de metal.` },
+      { type: 'text', body: `<strong>Sensores NTC:</strong> son resistencias que cambian su valor según la temperatura. NTC significa "coeficiente de temperatura negativo": cuando sube la temperatura, baja la resistencia. La caldera tiene varios: uno en el circuito de ida del agua, uno en el retorno, uno en los gases de salida. Si un sensor NTC da un valor fuera de rango, la caldera lo interpreta como falla y muestra un código de error.` },
+      { type: 'text', body: `<strong>Electrodo de ionización:</strong> detecta si hay llama. Cuando hay fuego, el electrodo conduce una pequeña corriente eléctrica a través de la llama. Si no detecta esa corriente, la placa cierra el gas (medida de seguridad).<br><br><strong>Presostato de agua:</strong> detecta si hay suficiente presión de agua en el circuito. Si la presión baja de 0.5 bar, la caldera no enciende.<br><br><strong>Presostato de aire:</strong> confirma que el ventilador está girando antes de abrir el gas.` }
+    ],
+    practica: { label: 'Práctica Lab. 2 — sensor NTC', text: 'Tomá un sensor NTC y medí su resistencia con el multímetro a temperatura ambiente. Anotá el valor. Sumergilo en agua caliente (no hirviendo) y medí nuevamente. ¿Bajó la resistencia? ¿Cuánto? Eso confirma que el sensor funciona. Si no cambia, el sensor está dañado.' }
+  },
+  10: {
+    num: 10, mod: 4,
+    title: 'La cascada de arranque: cómo enciende la caldera',
+    tags: ['teoria', 'diagnostico'],
+    content: [
+      { type: 'text', body: `La <strong>cascada de arranque</strong> es la secuencia de pasos que sigue la caldera cada vez que necesita encender. Si cualquier paso falla, la caldera se detiene y muestra un error. Por eso se llama "cascada": cada etapa depende de la anterior.` },
+      { type: 'text', body: `<strong>La secuencia completa:</strong><br><br><strong>1. Demanda de calor:</strong> el termostato o la prioridad de agua caliente pide calor. La placa recibe la señal.<br><strong>2. Chequeo de seguridades:</strong> la placa verifica presión de agua (¿hay agua?), presostato de aire (¿el ventilador puede arrancar?), temperatura (¿no está sobrecalentada?).<br><strong>3. Arranca el ventilador:</strong> primero ventila la cámara de combustión por unos segundos para limpiar cualquier resto de gas.<br><strong>4. El presostato de aire cierra:</strong> confirma que el ventilador gira. Si no cierra, la caldera no sigue.<br><strong>5. La placa abre la válvula de gas:</strong> el gas empieza a fluir.<br><strong>6. Chispa:</strong> los electrodos generan chispa para encender el gas.<br><strong>7. El electrodo de ionización detecta la llama:</strong> si en 3-5 segundos no hay llama, la placa cierra el gas y da error.<br><strong>8. Circulación de agua:</strong> la bomba empieza a circular el agua.` },
+      { type: 'text', body: `<strong>Para el técnico</strong>, esta cascada es un mapa de diagnóstico. Si la caldera falla, la pregunta es: ¿hasta qué etapa llegó? Eso reduce el problema a un componente específico.` }
+    ],
+    practica: { label: 'Actividad de la clase', text: 'Sin mirar las notas, dibujá la cascada de arranque de memoria. Luego el docente plantea: "La caldera arranca el ventilador pero nunca enciende la llama". ¿En qué etapas puede estar la falla? Lista al menos 3 causas posibles y cómo verificarías cada una.' }
+  },
+  11: {
+    num: 11, mod: 4,
+    title: 'Instrumentos de medición: el multímetro y más',
+    tags: ['teoria', 'practica'],
+    content: [
+      { type: 'text', body: `El <strong>multímetro</strong> es la herramienta más importante del técnico de calderas. Con él podés medir tres cosas básicas: voltaje (tensión), resistencia y continuidad.` },
+      { type: 'text', body: `<strong>Continuidad:</strong> el modo más usado en diagnóstico. El multímetro emite un pitido si hay corriente circulando entre los dos puntos donde tocás. Sirve para verificar si un cable está cortado, si un fusible está quemado o si un interruptor funciona. <strong>Nunca medís continuidad en un circuito con tensión.</strong><br><br><strong>Resistencia (Ω):</strong> medís cuánto se opone un componente al paso de la corriente. Cada sensor NTC tiene un rango de valores esperado según la temperatura. Si el valor está muy fuera de rango, el sensor está fallando.` },
+      { type: 'text', body: `<strong>Voltaje:</strong> medís la tensión en un circuito. En calderas vas a encontrar 220V (tensión de red) y señales de control de 24V o menos. La medición de 220V solo se hace con el equipo conectado y con las precauciones correctas.<br><br><strong>Manómetro:</strong> mide la presión del circuito hidráulico. La presión normal es 1 a 1.5 bar. Si está por debajo de 0.8 bar, la caldera no enciende.<br><br><strong>Detector de gas:</strong> imprescindible antes de cualquier trabajo en el circuito de gas. Si detecta gas, no tocás nada: primero ventilás el ambiente.` }
+    ],
+    practica: { label: 'Práctica Lab. 1 + Lab. 2', text: 'Con el multímetro: (1) medí continuidad de tres cables, uno cortado y dos enteros — identificá cuál es cuál. (2) medí un sensor NTC en agua fría y agua caliente, anotá ambos valores y confirmá si el sensor es funcional. (3) medí la resistencia de tres fusibles, uno quemado y dos buenos — identificá el malo.' }
+  },
+  12: {
+    num: 12, mod: 4,
+    title: 'Taller de multímetro: práctica extendida',
+    tags: ['practica'],
+    content: [
+      { type: 'text', body: `En esta clase aplicamos todo lo aprendido sobre el multímetro en situaciones que simulan problemas reales de campo. El objetivo es desarrollar la habilidad de <strong>diagnosticar por medición</strong>, no por intuición.` },
+      { type: 'text', body: `<strong>Errores comunes que vamos a simular:</strong><br><br>• Cable cortado a la mitad (difícil de ver visualmente)<br>• Falso contacto (el cable hace contacto intermitente)<br>• Fusible quemado en placa electrónica<br>• Sensor NTC fuera de rango (resistencia muy alta o muy baja para la temperatura actual)<br>• Interruptor defectuoso (a veces conduce, a veces no)` },
+      { type: 'text', body: `<strong>Metodología de trabajo:</strong><br><br>1. Observar el síntoma del circuito (no enciende, parpadea, falla intermitente)<br>2. Decidir qué medir primero (no toques todo al azar)<br>3. Medir y anotar el valor<br>4. Comparar con el valor esperado<br>5. Confirmar diagnóstico<br>6. Reparar y verificar que funciona` },
+      { type: 'text', body: `La medición de <strong>220V</strong> se hace con el circuito energizado. El docente hace una demostración: cómo sostener las puntas, cómo leer la pantalla, por qué nunca tocás con la mano libre nada metálico mientras medís. Los alumnos no miden 220V en esta clase; lo observan.` }
+    ],
+    practica: { label: 'Práctica Lab. 1 + Lab. 3', text: 'Circuito completo: fuente de alimentación (batería o transformador) → interruptor → lámpara → retorno. El docente introduce fallas ocultas. Los alumnos deben: nombrar el síntoma, proponer qué medir, ejecutar la medición, confirmar la falla y reparar. Se hacen al menos 4 rondas de falla diferente.' }
+  },
+  13: {
+    num: 13, mod: 5,
+    title: 'Mantenimiento preventivo: el protocolo del técnico',
+    tags: ['practica'],
+    content: [
+      { type: 'text', body: `El <strong>mantenimiento preventivo</strong> es el servicio que hacés antes de que algo se rompa. Es la visita anual que debería tener toda caldera. Un buen mantenimiento previene el 70% de las fallas de campo.` },
+      { type: 'text', body: `<strong>Protocolo completo de mantenimiento anual:</strong><br><br><strong>1. Inspección visual:</strong> buscá signos de corrosión, humedad, cables pelados, caños con pérdidas. Mirá el color del piloto (si es amarillo o naranja, hay problema de combustión).<br><br><strong>2. Limpieza del quemador:</strong> retirá el quemador y limpiá los inyectores con aire comprimido (nunca con aguja metálica que los deforma). Limpiá los electrodos de ionización y encendido.<br><br><strong>3. Limpieza del intercambiador:</strong> el tizne (hollín) que se acumula reduce la eficiencia. Un intercambiador limpio puede mejorar el rendimiento hasta un 10%.` },
+      { type: 'text', body: `<strong>4. Verificación de presión:</strong> el manómetro debe marcar entre 1 y 1.5 bar en frío. Si está por debajo, cargás agua. Si está muy por encima, revisás el vaso de expansión.<br><br><strong>5. Revisión de la bomba:</strong> escuchá si hace ruido (puede tener aire o estar trabada). Verificá que circule correctamente.<br><br><strong>6. Control de combustión:</strong> si tenés analizador, medís CO2 y CO en los gases de salida. Sin analizador, observás el color de la llama: debe ser azul con corona azul claro.<br><br><strong>7. Prueba de seguridades:</strong> simulá una baja de presión y verificá que la caldera se bloquee. Revisá que la válvula de seguridad de presión no esté trabada.` }
+    ],
+    practica: { label: 'Práctica Lab. 4 + Lab. 5', text: 'Aplicá el protocolo completo usando el checklist provisto. Si tenés una caldera real, hacé cada paso y anotá el resultado. Si trabajás con componentes en mesa, identificá qué herramienta o medición corresponde a cada etapa del protocolo.' }
+  },
+  14: {
+    num: 14, mod: 5,
+    title: 'Seguridad del técnico: gas, electricidad y CO',
+    tags: ['seguridad'],
+    content: [
+      { type: 'text', body: `La seguridad no es opcional. En el trabajo con calderas existe riesgo de muerte por tres causas principales: intoxicación por gas, electrocución y monóxido de carbono. Conocer los riesgos y los protocolos puede salvar tu vida y la de otros.` },
+      { type: 'text', body: `<strong>Riesgo de gas:</strong><br>El gas natural no tiene olor por sí solo: la industria le agrega un componente (mercaptano) para que lo podamos detectar. Si olés gas:<br>1. No enciendas ni apagues ninguna luz ni aparato eléctrico (puede generar chispa).<br>2. Abrí ventanas y puertas.<br>3. Cerrá la llave de paso de gas.<br>4. Salí del ambiente.<br>5. Llamá desde afuera.<br><br><strong>Nunca busques la fuga con un encendedor.</strong>` },
+      { type: 'text', body: `<strong>Riesgo eléctrico:</strong><br>Antes de trabajar en el interior de una caldera, siempre desconectala del tomacorriente. Verificá con el tester que no hay tensión antes de tocar. Nunca trabajes con la mano izquierda en la caldera y la derecha en otro metal (si recibís una descarga, pasa por el corazón).<br><br><strong>Monóxido de carbono (CO):</strong><br>Es inodoro, incoloro e indetectable por el ser humano. Mata sin avisar. En ambientes cerrados con mala combustión se acumula rápidamente. Usá siempre un detector de CO. Los síntomas de intoxicación son dolor de cabeza, mareos y náuseas.` },
+      { type: 'text', body: `<strong>Equipos de protección (EPP):</strong><br>• Guantes de trabajo (no para 220V, para trabajo mecánico)<br>• Lentes de seguridad (cuando trabajás en el circuito hidráulico con agua a presión)<br>• Detector de gas portatil (obligatorio)<br>• Detector de CO portatil (muy recomendado)<br>• Ropa sin partes sueltas que puedan enredarse en partes móviles` }
+    ],
+    practica: { label: 'Ejercicio de roles', text: 'El docente plantea tres escenarios: (A) llegás a un departamento, el cliente dice que "huele raro" y la caldera no enciende. (B) Estás trabajando dentro de la caldera y escuchás un clic y ves una chispa. (C) El cliente dice que tiene dolor de cabeza hace días y la caldera "a veces se apaga sola". ¿Cómo respondés en cada caso? ¿Qué hacés primero?' }
+  },
+  15: {
+    num: 15, mod: 5,
+    title: 'Códigos de error y metodología de diagnóstico',
+    tags: ['diagnostico'],
+    content: [
+      { type: 'text', body: `Las calderas modernas muestran <strong>códigos de error</strong> en su pantalla cuando detectan un problema. Cada código corresponde a una falla específica o a una condición de seguridad activada. Leer el código es el punto de partida de cualquier diagnóstico.` },
+      { type: 'text', body: `<strong>Errores frecuentes en Peisa, Caldaia y Baxi:</strong><br><br>• <strong>Falta de llama / error de encendido:</strong> la caldera intentó encender pero no detectó llama. Causas: electrodo sucio, falta de gas, válvula de gas defectuosa, presostato de aire.<br><br>• <strong>Presión baja del circuito:</strong> el presostato de agua no detecta presión suficiente. Causas: pérdida de agua, vaso de expansión fallido, válvula de llenado cerrada.<br><br>• <strong>Falla de ventilador:</strong> el presostato de aire no cierra. Causas: ventilador trabado o quemado, presostato defectuoso, ducto obstruido.<br><br>• <strong>Sensor defectuoso (NTC):</strong> la resistencia del sensor está fuera del rango esperado. Causas: sensor quemado, cable cortado, mala conexión.` },
+      { type: 'text', body: `<strong>Metodología de diagnóstico sistemático:</strong><br><br><strong>Paso 1:</strong> Leer el código de error (o describir el síntoma si no hay pantalla).<br><strong>Paso 2:</strong> Ubicar la etapa de la cascada donde ocurre la falla.<br><strong>Paso 3:</strong> Listar los componentes que intervienen en esa etapa.<br><strong>Paso 4:</strong> Medir cada componente en orden (del más fácil de verificar al más difícil).<br><strong>Paso 5:</strong> Confirmar cuál componente da un valor fuera de especificación.<br><strong>Paso 6:</strong> Reparar o reemplazar y verificar que el error desaparece.<br><br>Nunca reemplaces componentes "a ver si funciona" sin medir primero. Cuesta tiempo, dinero y credibilidad.` }
+    ],
+    practica: { label: 'Práctica Lab. 7', text: 'El docente entrega fichas con secuencias de cascada incompletas. Ejemplo: "La caldera enciende el ventilador. El presostato de aire cierra. Se abre la válvula de gas. NO hay chispa." ¿Cuáles son los posibles componentes fallando? ¿Qué medirías primero? ¿Con qué instrumento?' }
+  },
+  16: {
+    num: 16, mod: 5,
+    title: 'Taller final de diagnóstico: casos reales',
+    tags: ['diagnostico', 'practica'],
+    content: [
+      { type: 'text', body: `Esta es la clase de integración. Vas a aplicar todo lo aprendido en el curso para resolver casos de falla técnica real. El objetivo no es que recuerdes de memoria: es que uses la <strong>metodología de diagnóstico</strong> que practicaste.` },
+      { type: 'text', body: `<strong>Caso A — La caldera no enciende:</strong><br>Datos: presión del circuito correcta (1.2 bar). El ventilador arranca. El presostato de aire cierra. No hay chispa.<br>Preguntás: ¿Cuáles son los 3 componentes más probables? ¿Qué medís primero? ¿Qué valor esperás encontrar?` },
+      { type: 'text', body: `<strong>Caso B — Enciende pero se apaga a los 30 segundos:</strong><br>Datos: la caldera enciende normalmente. La llama es visible. A los 30 segundos se apaga y da error de llama.<br>Pista: el electrodo de ionización es lo que "ve" la llama. ¿Qué podría estar pasando?` },
+      { type: 'text', body: `<strong>Caso C — No circula agua / radiadores fríos:</strong><br>Datos: la caldera enciende y la llama está bien. Los radiadores no calientan o calientan muy poco. No hay ruidos extraños.<br>Preguntás: ¿Dónde está el problema? ¿Hidráulico, mecánico o de control?` },
+      { type: 'text', body: `<strong>Caso D — Error de presión que vuelve solo:</strong><br>Datos: la caldera da error de presión baja. El técnico carga agua y funciona. Al día siguiente vuelve el error. El propietario dice que pasa hace 3 meses.<br>Preguntás: Si el problema vuelve, ¿hay una pérdida de agua? ¿Dónde buscarías? ¿Podría ser otra causa?` }
+    ],
+    practica: { label: 'Práctica Lab. 8 — taller final', text: 'Mesa de diagnóstico con estaciones rotativas: (1) Estación hidráulica: bomba y circuito. (2) Estación eléctrica: cables, fusibles y continuidad. (3) Estación sensores: NTC y presostatos. (4) Estación diagnóstico: se presenta un caso completo y el alumno lo resuelve solo. Cada alumno debe completar las 4 estaciones.' }
+  }
+};
+
+const QUIZZES = {
+  1: [
+    { q: '¿Cuál es la diferencia principal entre una caldera y un termotanque?', opts: ['La caldera usa electricidad y el termotanque gas','La caldera hace circular agua caliente para calefacción; el termotanque solo almacena agua caliente','El termotanque es más moderno que la caldera','No hay diferencia, son lo mismo'], correct: 1, exp: 'El termotanque guarda agua caliente lista para la canilla. La caldera además hace circular agua por toda la casa para calefaccionar.' },
+    { q: '¿Para qué sirve una caldera "dual" o "combi"?', opts: ['Solo para calefacción','Solo para agua caliente sanitaria','Para calefacción Y agua caliente sanitaria al mismo tiempo','Para calefacción industrial'], correct: 2, exp: 'Las calderas duales (o combi) cubren ambas funciones: calientan los radiadores y dan agua caliente para la canilla.' },
+    { q: '¿Cuáles son las tres marcas más usadas en Argentina que veremos en este curso?', opts: ['Ariston, Vaillant, Junkers','Peisa, Caldaia, Baxi','Ferroli, Hermann, Beretta','Roca, Sime, Immergas'], correct: 1, exp: 'Peisa, Caldaia y Baxi son las marcas de referencia del mercado residencial argentino que trabajaremos en el curso.' }
+  ],
+  2: [
+    { q: '¿Qué característica principal tienen las calderas modernas que las hace más eficientes que las antiguas?', opts: ['Son más grandes','Usan carbón en vez de gas','Tienen modulación y electrónica que ajustan la potencia según la demanda','Son de hierro fundido más grueso'], correct: 2, exp: 'La modulación permite que la caldera ajuste su potencia entre un mínimo y un máximo, sin desperdiciar energía.' },
+    { q: '¿Qué riesgo tenían las primeras calderas industriales del siglo XIX?', opts: ['Contaminaban el agua','Podían explotar por la alta presión y mala construcción','Consumían demasiada electricidad','Eran demasiado silenciosas'], correct: 1, exp: 'Las calderas antiguas de hierro fundido y carbón operaban a alta presión sin los sistemas de seguridad actuales y frecuentemente explotaban.' },
+    { q: '¿Qué es la modulación en una caldera moderna?', opts: ['La capacidad de funcionar sin gas','El sistema de arranque automático','La capacidad de variar la potencia de quemado según la necesidad','El sistema de evacuación de gases'], correct: 2, exp: 'Una caldera modulante puede quemar más o menos gas según cuánto calor necesita, en vez de encender y apagar constantemente al máximo.' }
+  ],
+  3: [
+    { q: 'Cuando calentás agua en una olla, el agua caliente sube y la fría baja. Ese movimiento es un ejemplo de:', opts: ['Conducción','Convección','Radiación','Presión'], correct: 1, exp: 'La convección es el movimiento de un fluido (líquido o gas) por diferencias de temperatura. El fluido caliente sube porque es menos denso.' },
+    { q: '¿Qué pasa si en la combustión hay demasiado gas y poco aire?', opts: ['La llama es más eficiente','La llama se vuelve azul intensa','La llama es amarilla y puede producir monóxido de carbono','La caldera consume menos gas'], correct: 2, exp: 'Una llama amarilla indica combustión incompleta por falta de oxígeno. Esto produce monóxido de carbono, que es tóxico.' },
+    { q: '¿Cuál es la presión de trabajo normal de una caldera doméstica?', opts: ['0.1 a 0.3 bar','1 a 1.5 bar','5 a 6 bar','10 a 12 bar'], correct: 1, exp: 'Las calderas domésticas trabajan con una presión de circuito entre 1 y 1.5 bar en frío. Por encima o por debajo de ese rango hay problemas.' }
+  ],
+  4: [
+    { q: '¿Cuál es la principal ventaja de una caldera de condensación respecto a una atmosférica?', opts: ['Es más barata','Es más pequeña','Recupera el calor del vapor de los gases de salida, logrando mayor eficiencia','Solo funciona con gas natural'], correct: 2, exp: 'Las calderas de condensación aprovechan el calor latente del vapor de agua en los gases de combustión, llegando hasta un 109% de eficiencia.' },
+    { q: '¿Qué diferencia una caldera de tiro balanceado de una atmosférica?', opts: ['La potencia de quemado','Que toma el aire del exterior (no del ambiente) y evacua gases al exterior','El precio de venta','El tamaño del intercambiador'], correct: 1, exp: 'La caldera de tiro balanceado no usa el aire del cuarto donde está instalada, sino que lo toma directamente del exterior. Esto la hace más segura.' },
+    { q: 'Una caldera "solo calefacción" ¿puede dar agua caliente para la canilla?', opts: ['Sí, siempre','Solo en verano','No, para eso se necesita una caldera dual o combi','Sí, con un accesorio especial que incluye de fábrica'], correct: 2, exp: 'Una caldera de solo calefacción calienta el circuito de radiadores pero no tiene intercambiador para agua sanitaria. Para eso necesitás una caldera combi.' }
+  ],
+  5: [
+    { q: '¿Para qué sirve el electrodo de encendido en un quemador?', opts: ['Para medir la temperatura de la llama','Para generar la chispa que enciende el gas','Para controlar la cantidad de gas que pasa','Para detectar si hay llama encendida'], correct: 1, exp: 'El electrodo de encendido genera la chispa eléctrica que enciende la mezcla gas-aire en el quemador.' },
+    { q: '¿Qué ventaja tiene un quemador modulante respecto a uno fijo?', opts: ['Consume más gas','Puede variar su potencia entre un mínimo y un máximo según la demanda','Es más simple de reparar','Produce llama amarilla más estable'], correct: 1, exp: 'El quemador modulante adapta su potencia a la demanda real, evitando los ciclos de encendido-apagado constantes que gastan más gas.' },
+    { q: 'Si un inyector del quemador está tapado, ¿qué pasa?', opts: ['La caldera explota','Esa parte del quemador no enciende, la llama es irregular','La caldera consume más gas','No pasa nada, los otros inyectores compensan perfectamente'], correct: 1, exp: 'Cada inyector alimenta una parte del quemador. Si está tapado, esa sección no enciende y la llama queda irregular, afectando la eficiencia y pudiendo generar errores.' }
+  ],
+  6: [
+    { q: '¿Por qué es importante que los gases de combustión salgan al exterior?', opts: ['Para ahorrar gas','Porque los gases quemados incluyen CO₂ y pueden incluir CO, que son peligrosos en ambientes cerrados','Para cumplir una norma estética','Para enfriar la caldera'], correct: 1, exp: 'Los gases de combustión contienen CO₂ y potencialmente CO (monóxido de carbono), que es tóxico. Deben evacuarse siempre al exterior.' },
+    { q: '¿Qué hace el presostato de aire en el sistema de evacuación?', opts: ['Mide la temperatura de los gases de salida','Confirma que el ventilador está funcionando antes de abrir el gas','Cierra el caño de evacuación cuando llueve','Regula la velocidad del ventilador'], correct: 1, exp: 'El presostato de aire es un interruptor de seguridad: se activa cuando el ventilador genera suficiente presión, confirmando que funciona antes de autorizar la apertura del gas.' },
+    { q: 'Si el ducto de evacuación de una caldera está parcialmente obstruido, ¿qué puede pasar?', opts: ['La caldera funciona igual pero gasta más gas','La caldera se bloquea por seguridad o los gases entran al ambiente, con riesgo de intoxicación','Solo afecta la eficiencia levemente','El ventilador trabaja mejor para compensar'], correct: 1, exp: 'Un ducto obstruido puede hacer que los gases quemados entren al ambiente, con riesgo de intoxicación por CO. La caldera puede bloquearse por seguridad si el presostato detecta baja presión de aire.' }
+  ],
+  7: [
+    { q: '¿Qué componente hace mover el agua por los radiadores de la casa?', opts: ['El intercambiador','La válvula de tres vías','La bomba circuladora','El vaso de expansión'], correct: 2, exp: 'La bomba circuladora es el componente mecánico que impulsa el agua por todo el circuito de calefacción.' },
+    { q: '¿Para qué sirve el vaso de expansión?', opts: ['Para almacenar agua de reserva','Para absorber el aumento de volumen del agua cuando se calienta, evitando subidas de presión','Para purgar el aire del circuito','Para mezclar agua caliente y fría'], correct: 1, exp: 'El agua se expande al calentarse. El vaso de expansión absorbe ese exceso de volumen para que la presión del sistema no suba cada vez que enciende la caldera.' },
+    { q: '¿Qué problema genera el aire acumulado en el circuito hidráulico?', opts: ['Nada, el aire ayuda a la circulación','Ruidos, pérdida de eficiencia y puede trabar la bomba','Solo hace que el agua tarde más en calentarse','Aumenta la presión del sistema'], correct: 1, exp: 'El aire en el circuito genera ruidos, crea puntos muertos donde el agua no circula bien y en casos severos puede impedir que la bomba mueva el agua.' }
+  ],
+  8: [
+    { q: '¿Por qué las válvulas de gas están diseñadas para quedar cerradas cuando hay una falla eléctrica?', opts: ['Para ahorrar energía','Por diseño de seguridad: la posición de falla debe ser siempre la más segura (gas cortado)','Para facilitar el diagnóstico','Es un defecto de diseño que se está corrigiendo'], correct: 1, exp: 'El principio "fail-safe" en sistemas de gas dice que cualquier falla debe dejar el sistema en la posición más segura. Para el gas, eso es siempre válvula cerrada.' },
+    { q: '¿Qué pasa si la presión de gas que llega al quemador es incorrecta?', opts: ['Nada, la caldera se adapta automáticamente','La llama puede ser inestable, el quemador puede apagarse o la combustión puede ser incompleta','Solo varía el consumo económico','La válvula de gas compensa automáticamente'], correct: 1, exp: 'La presión correcta de gas es crítica para una combustión estable. Si es muy baja, la llama se apaga. Si es muy alta, puede haber combustión incompleta.' },
+    { q: 'La rampa de gas tiene un regulador de presión. ¿Para qué sirve?', opts: ['Para aumentar la presión de la red al nivel que necesita la caldera','Para asegurar que el gas llegue al quemador siempre a la misma presión, independientemente de la presión variable de la red','Para medir el consumo de gas','Para filtrar impurezas del gas'], correct: 1, exp: 'La presión de la red puede variar según la demanda del barrio. El regulador garantiza que el quemador siempre reciba gas a la presión exacta para la que fue diseñado.' }
+  ],
+  9: [
+    { q: 'Un sensor NTC mide 12.000 Ω a temperatura ambiente. Lo ponés en agua caliente y ahora mide 2.000 Ω. ¿El sensor está bien o mal?', opts: ['Mal, la resistencia debería aumentar con el calor','Bien, en un sensor NTC la resistencia baja cuando sube la temperatura','Mal, el valor debería quedarse igual','Bien, pero solo si el valor exacto coincide con la tabla'], correct: 1, exp: 'NTC = coeficiente negativo de temperatura. La resistencia baja cuando sube la temperatura. Si observás ese comportamiento, el sensor funciona correctamente.' },
+    { q: '¿Qué pasa si el electrodo de ionización está muy sucio o mal posicionado?', opts: ['La llama enciende pero es más grande','La caldera no puede detectar si hay llama y cierra el gas por seguridad, dando error de encendido','No pasa nada, el electrodo es redundante','La caldera consume más gas'], correct: 1, exp: 'El electrodo de ionización es el único componente que verifica que hay llama. Si no conduce (por suciedad o mal posicionamiento), la placa asume que no hay llama y cierra el gas.' },
+    { q: '¿Por qué la caldera se bloquea si el presostato de agua no detecta presión suficiente?', opts: ['Para ahorrar gas','Porque sin suficiente agua en el circuito el intercambiador podría sobrecalentarse y dañarse','Por una norma estética','Porque la bomba no puede arrancar sin presión'], correct: 1, exp: 'Sin agua suficiente en el circuito, el intercambiador (que es metálico y está en contacto con la llama) puede calentarse hasta dañarse o crear condiciones peligrosas.' }
+  ],
+  10: [
+    { q: 'Una caldera llega hasta la etapa del ventilador pero luego no sigue. ¿Cuál es la causa más probable?', opts: ['El termostato está apagado','El presostato de aire no cierra, posiblemente el ventilador no gira bien o hay una obstrucción','El gas está cortado','La bomba no funciona'], correct: 1, exp: 'En la cascada, después del ventilador viene la confirmación del presostato de aire. Si este no cierra, la caldera se detiene en ese punto.' },
+    { q: '¿Por qué la caldera ventila la cámara antes de abrir el gas?', opts: ['Para calentar el intercambiador','Para limpiar cualquier resto de gas no quemado de un intento anterior, evitando una explosión al encender','Para verificar el flujo de agua','Para activar el presostato de agua'], correct: 1, exp: 'Si quedó gas del intento anterior, encender la chispa podría causar una pequeña explosión. El barrido previo de aire limpia la cámara y hace el encendido seguro.' },
+    { q: 'La caldera intenta encender pero no detecta llama en 5 segundos. ¿Qué hace automáticamente?', opts: ['Sigue intentando indefinidamente','Cierra el gas y da un error de encendido (bloqueo de seguridad)','Llama a un técnico','Reduce la potencia del quemador'], correct: 1, exp: 'Si la llama no se detecta en el tiempo establecido, la placa cierra el gas inmediatamente por seguridad y registra el error. Hay que reiniciar manualmente.' }
+  ],
+  11: [
+    { q: '¿En qué modo del multímetro medís para saber si un cable está cortado?', opts: ['Voltaje (V)','Corriente (A)','Continuidad (pitido)','Temperatura (°C)'], correct: 2, exp: 'El modo continuidad emite un pitido si hay paso de corriente entre los dos puntos. Si el cable está cortado, no habrá pitido.' },
+    { q: 'Medís un sensor NTC con el multímetro en modo resistencia y da "OL" (overload, fuera de límite). ¿Qué significa?', opts: ['El sensor está en cortocircuito','El sensor está abierto (circuito abierto), está dañado','El multímetro está mal calibrado','El sensor está bien, es el valor normal a temperatura ambiente'], correct: 1, exp: '"OL" en el modo de resistencia indica que la resistencia es infinita (circuito abierto). El sensor NTC está roto internamente.' },
+    { q: '¿Cuál es la presión normal del circuito hidráulico de una caldera doméstica en frío?', opts: ['0.1 a 0.3 bar','1 a 1.5 bar','3 a 4 bar','6 a 8 bar'], correct: 1, exp: 'Una presión de 1 a 1.5 bar en frío es la normal para una caldera doméstica. Por debajo de 0.5-0.8 bar, la caldera no enciende.' }
+  ],
+  12: [
+    { q: 'Tenés un circuito que a veces funciona y a veces no, sin causa aparente. ¿Cuál es la falla más probable?', opts: ['Cable cortado limpiamente','Fusible quemado','Falso contacto (conexión intermitente)','Placa electrónica dañada'], correct: 2, exp: 'Las fallas intermitentes casi siempre indican un falso contacto: una conexión que hace y pierde contacto según la vibración, temperatura o posición del cable.' },
+    { q: '¿Cuál es la regla básica de seguridad al medir continuidad en un circuito?', opts: ['El circuito debe estar energizado (con tensión)','El circuito debe estar desconectado (sin tensión)','Da igual si hay o no tensión','Solo importa en circuitos de 220V, no en los de 24V'], correct: 1, exp: 'La continuidad y la resistencia siempre se miden sin tensión en el circuito. Medir continuidad con tensión puede dañar el multímetro y es peligroso.' },
+    { q: 'Un fusible mide continuidad perfecta. ¿Está bien o mal?', opts: ['Mal, los fusibles nunca deben conducir','Bien, significa que no está quemado','Depende de la marca del fusible','No es posible medir un fusible con multímetro'], correct: 1, exp: 'Un fusible en buen estado conduce: tiene continuidad. Un fusible quemado tiene su filamento roto: no hay continuidad (el multímetro no pita).' }
+  ],
+  13: [
+    { q: '¿Con qué frecuencia se recomienda hacer el mantenimiento preventivo de una caldera doméstica?', opts: ['Cada 5 años','Una vez al año, antes del invierno','Cada 10 años o cuando se rompe','Solo cuando el usuario lo pide'], correct: 1, exp: 'El mantenimiento anual, idealmente antes del invierno, permite detectar problemas antes de que se conviertan en fallas graves en el peor momento.' },
+    { q: '¿Por qué no se deben limpiar los inyectores del quemador con una aguja o alambre metálico?', opts: ['Porque se puede dañar el esmalte protector','Porque el metal puede deformar el orificio calibrado, alterando el caudal de gas y la combustión','Porque puede producir chispas peligrosas','Porque los inyectores no necesitan limpiarse'], correct: 1, exp: 'Los inyectores tienen orificios de precisión. Un alambre puede agrandarlos o deformarlos, alterando la cantidad de gas que pasa y arruinando la combustión.' },
+    { q: '¿Qué indica que la llama del quemador es de color amarillo o naranja?', opts: ['Que la caldera está funcionando al máximo','Que hay combustión incompleta, posiblemente por falta de aire o inyectores sucios','Que el gas tiene alta presión','Que la caldera está en modo ahorro'], correct: 1, exp: 'La llama azul indica combustión correcta. La llama amarilla o naranja indica combustión incompleta, que puede producir monóxido de carbono.' }
+  ],
+  14: [
+    { q: 'Llegás a un domicilio y el cliente dice que huele a gas. ¿Qué es lo PRIMERO que hacés?', opts: ['Encendés la luz para ver mejor','Buscás la fuga con el detector de gas antes de abrir nada','NO tocás ningún interruptor eléctrico, abrís ventanas y cerrás la llave de paso de gas','Encendés la caldera para ver si el olor desaparece'], correct: 2, exp: 'Ante olor a gas, la prioridad es no generar chispas (no tocar interruptores), ventilar el ambiente y cortar el suministro de gas. Luego salís y llamás desde afuera.' },
+    { q: '¿Por qué el monóxido de carbono (CO) es especialmente peligroso?', opts: ['Porque tiene un olor muy fuerte que avisa','Porque es inodoro e incoloro: no podés detectarlo sin instrumento','Porque baja la temperatura del ambiente','Porque daña las cañerías de gas'], correct: 1, exp: 'El CO no tiene olor ni color. Se acumula silenciosamente. Los síntomas de intoxicación (dolor de cabeza, mareos) se confunden fácilmente con otras cosas, lo que lo hace especialmente peligroso.' },
+    { q: 'Al trabajar con el interior de una caldera, ¿cuándo podés tocar los componentes internos?', opts: ['En cualquier momento, las calderas tienen protección automática','Solo después de desconectarla del tomacorriente y verificar con el tester que no hay tensión','Siempre que uses guantes de goma','Solo si la caldera está apagada pero conectada'], correct: 1, exp: 'Desconectar de la red NO es suficiente: hay que verificar con el tester que el punto donde vas a trabajar realmente no tiene tensión. Los errores en este punto pueden ser fatales.' }
+  ],
+  15: [
+    { q: 'La caldera muestra un error de "presión baja". El técnico carga agua, reinicia y funciona. Al día siguiente el error vuelve. ¿Qué indica esto?', opts: ['Que hay que cargar más agua cada día','Que hay una pérdida de agua en algún punto del circuito o el vaso de expansión está fallado','Que el presostato de agua está mal calibrado','Que la caldera es defectuosa de fábrica'], correct: 1, exp: 'Si la presión baja repetidamente, el agua se está escapando por algún lado. Puede ser una pérdida visible (goteo) o interna (válvula de seguridad que descarga). El vaso de expansión fallido también puede causar este síntoma.' },
+    { q: '¿Cuál es la primera acción en la metodología de diagnóstico sistemático?', opts: ['Reemplazar el componente más probable','Leer el código de error o identificar el síntoma con precisión','Apagar y encender la caldera varias veces','Llamar al servicio técnico del fabricante'], correct: 1, exp: 'Sin saber exactamente qué síntoma o código hay, cualquier diagnóstico es una adivinanza. El punto de partida siempre es identificar el problema con precisión.' },
+    { q: 'El técnico tiene que elegir qué medir primero. ¿Cuál es el criterio correcto?', opts: ['Empezar por el componente más caro','Empezar por el componente más fácil y rápido de verificar, y avanzar hacia los más complejos','Medir todo al mismo tiempo','Empezar siempre por la placa electrónica'], correct: 1, exp: 'Ir de lo simple a lo complejo ahorra tiempo y dinero. Verificar continuidad de un cable tarda 30 segundos. Reemplazar una placa puede costar mucho. Primero lo fácil.' }
+  ],
+  16: [
+    { q: 'Caso A: ventilador OK, presostato de aire cierra, pero no hay chispa. ¿Cuál es el componente menos probable que sea la causa?', opts: ['Electrodo de encendido sucio o roto','Cable del electrodo cortado','Transformador de encendido fallado','Bomba circuladora'], correct: 3, exp: 'La bomba circuladora opera en la etapa de circulación de agua, que viene después del encendido. Un problema de bomba no afectaría la generación de chispa.' },
+    { q: 'Caso B: la caldera enciende bien pero se apaga a los 30 segundos con error de llama. El electrodo de encendido funciona. ¿Cuál es la causa más probable?', opts: ['El ventilador es muy lento','El electrodo de ionización está sucio, mal posicionado o su cable está dañado','La presión del circuito es alta','El termostato está en temperatura baja'], correct: 1, exp: 'Si la llama enciende pero se "pierde" a los 30 segundos, el problema es en la detección: el electrodo de ionización no está confirmando la presencia de llama.' },
+    { q: 'Caso D: error de presión baja que vuelve cada día. No hay goteos visibles. ¿Qué componente es más probable que esté fallando?', opts: ['El intercambiador de calor','El vaso de expansión (cuando falla, la presión sube en caliente y la válvula de seguridad descarga agua)','El electrodo de ionización','El ventilador'], correct: 1, exp: 'El vaso de expansión fallido hace que la presión suba mucho cuando la caldera calienta, la válvula de seguridad se abre para liberar presión y descarga agua, bajando la presión. Al día siguiente hay que volver a cargar.' }
+  ]
+};
+
+let currentScreen = 'splash';
+let currentModule = null;
+let currentClassId = null;
+let currentQuizClass = null;
+let currentQuizQ = 0;
+let quizAnswers = [];
+let quizAnswered = false;
+
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('calderas_progress') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem('calderas_progress', JSON.stringify(p)); } catch(e) {}
+}
+function markComplete(classId) {
+  const p = getProgress(); p[classId] = true; saveProgress(p);
+}
+function isComplete(classId) { return !!getProgress()[classId]; }
+function countComplete() { return Object.keys(getProgress()).length; }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  currentScreen = id;
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  renderHome();
+  showScreen('home');
+}
+
+function renderHome() {
+  const done = countComplete();
+  const total = 16;
+  const pct = Math.round(done/total*100);
+  document.getElementById('home-prog-pill').textContent = done+'/'+total;
+  document.getElementById('overall-bar').style.width = pct+'%';
+  document.getElementById('overall-text').textContent = done + ' de ' + total + ' clases completadas · ' + pct + '%';
+
+  const wrap = document.getElementById('modules-home');
+  wrap.innerHTML = '';
+  MODULES.forEach(m => {
+    const done_m = m.classes.filter(c => isComplete(c)).length;
+    const pct_m = Math.round(done_m/m.classes.length*100);
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    card.innerHTML = `
+      <div class="module-header" onclick="openModule(${m.id})">
+        <div class="module-dot" style="background:${m.color}"></div>
+        <div class="module-info">
+          <div class="module-name">Módulo ${m.id} — ${m.name}</div>
+          <div class="module-sub">${m.sub}</div>
+        </div>
+        <div class="module-badge">${done_m}/${m.classes.length}</div>
+      </div>
+      <div class="module-prog-bar"><div class="module-prog-fill" style="width:${pct_m}%;background:${m.color}"></div></div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function openModule(modId) {
+  currentModule = modId;
+  const m = MODULES.find(x => x.id === modId);
+  document.getElementById('mod-list-label').textContent = 'Módulo ' + modId + ' de 5';
+  document.getElementById('mod-list-title').textContent = m.name;
+  document.getElementById('mod-list-desc').textContent = m.sub;
+  const done_m = m.classes.filter(c => isComplete(c)).length;
+  document.getElementById('mod-list-badge').textContent = done_m + '/' + m.classes.length;
+
+  const wrap = document.getElementById('class-list-items');
+  wrap.innerHTML = '';
+  m.classes.forEach((cid, idx) => {
+    const cls = CLASSES[cid];
+    const done = isComplete(cid);
+    const item = document.createElement('div');
+    item.className = 'class-item';
+    item.onclick = () => openClass(cid);
+    item.innerHTML = `
+      <div class="class-num ${done ? 'done' : ''}">${done ? '✓' : cid}</div>
+      <div class="class-body">
+        <div class="class-title-sm">${cls.title}</div>
+        <div class="class-meta">Clase ${cid} · ${cls.tags.map(t=>tagLabel(t)).join(' · ')}</div>
+      </div>
+      <div class="class-arrow">›</div>
+    `;
+    wrap.appendChild(item);
+  });
+  showScreen('module-list');
+}
+
+function tagLabel(t) {
+  return {teoria:'Teoría',practica:'Práctica',seguridad:'Seguridad',diagnostico:'Diagnóstico'}[t]||t;
+}
+
+function openClass(classId) {
+  currentClassId = classId;
+  const cls = CLASSES[classId];
+  const m = MODULES.find(x => x.classes.includes(classId));
+
+  document.getElementById('class-nav-pill').textContent = 'Clase ' + classId + '/16';
+
+  let html = '';
+  html += '<div class="class-badge" style="background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:#7fb3ff">Módulo ' + m.id + ' · Clase ' + classId + '</div>';
+  html += '<div class="class-main-title">' + cls.title + '</div>';
+  html += '<div style="margin-bottom:16px">';
+  cls.tags.forEach(t => { html += `<span class="tag-pill tag-${t}">${tagLabel(t)}</span>`; });
+  html += '</div>';
+  html += '<div class="class-section"><div class="class-section-title">Contenido de la clase</div>';
+  cls.content.forEach(block => {
+    html += `<div class="content-block"><p>${block.body}</p></div>`;
+  });
+  html += '</div>';
+  if (cls.practica) {
+    html += `<div class="practica-block"><div class="practica-label">${cls.practica.label}</div><div class="practica-text">${cls.practica.text}</div></div>`;
+  }
+  document.getElementById('class-content-area').innerHTML = html;
+
+  const allClasses = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  const idx = allClasses.indexOf(classId);
+  const prevBtn = document.getElementById('prev-btn');
+  const completeBtn = document.getElementById('complete-btn');
+  const nextBtn = document.getElementById('next-btn');
+  prevBtn.disabled = idx === 0;
+  nextBtn.style.display = 'none';
+  completeBtn.style.display = 'flex';
+  if (isComplete(classId)) {
+    completeBtn.style.display = 'none';
+    nextBtn.style.display = 'flex';
+    nextBtn.disabled = idx === allClasses.length - 1;
+    completeBtn.textContent = '✓ Completada';
+  } else {
+    completeBtn.textContent = 'Completar y evaluar →';
+  }
+  showScreen('class-view');
+}
+
+function backToModule() {
+  if (currentModule) openModule(currentModule);
+  else showScreen('home');
+}
+
+function prevClass() {
+  const all = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  const idx = all.indexOf(currentClassId);
+  if (idx > 0) openClass(all[idx-1]);
+}
+function nextClass() {
+  const all = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  const idx = all.indexOf(currentClassId);
+  if (idx < all.length-1) openClass(all[idx+1]);
+}
+
+function completeAndQuiz() {
+  startQuiz(currentClassId);
+}
+
+function startQuiz(classId) {
+  currentQuizClass = classId;
+  currentQuizQ = 0;
+  quizAnswers = [];
+  quizAnswered = false;
+  renderQuizQuestion();
+  showScreen('quiz-view');
+}
+
+function renderQuizQuestion() {
+  const qs = QUIZZES[currentQuizClass];
+  const q = qs[currentQuizQ];
+  document.getElementById('quiz-pill').textContent = (currentQuizQ+1) + '/' + qs.length;
+
+  let html = '';
+  html += `<div class="quiz-progress"><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${Math.round(currentQuizQ/qs.length*100)}%"></div></div></div>`;
+  html += `<div class="quiz-q-num">Pregunta ${currentQuizQ+1} de ${qs.length}</div>`;
+  html += `<div class="quiz-question">${q.q}</div>`;
+  html += `<div class="quiz-options" id="quiz-opts">`;
+  q.opts.forEach((opt, i) => {
+    html += `<button class="quiz-opt" id="opt-${i}" onclick="selectAnswer(${i})">${opt}</button>`;
+  });
+  html += `</div>`;
+  html += `<div class="quiz-feedback" id="quiz-fb"></div>`;
+  document.getElementById('quiz-content-area').innerHTML = html;
+
+  document.getElementById('quiz-nav-area').innerHTML = `<button class="btn-primary" id="quiz-next-btn" onclick="nextQuizQ()" style="display:none">
+    ${currentQuizQ < qs.length-1 ? 'Siguiente pregunta →' : 'Ver resultado →'}
+  </button>`;
+  quizAnswered = false;
+}
+
+function selectAnswer(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qs = QUIZZES[currentQuizClass];
+  const q = qs[currentQuizQ];
+  const correct = q.correct;
+  document.querySelectorAll('.quiz-opt').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    if (i === idx && i !== correct) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('quiz-fb');
+  fb.className = 'quiz-feedback show ' + (idx === correct ? 'ok' : 'fail');
+  fb.innerHTML = (idx === correct ? '✓ Correcto · ' : '✗ Incorrecto · ') + q.exp;
+  quizAnswers.push(idx === correct);
+  document.getElementById('quiz-next-btn').style.display = 'block';
+}
+
+function nextQuizQ() {
+  const qs = QUIZZES[currentQuizClass];
+  currentQuizQ++;
+  if (currentQuizQ >= qs.length) {
+    showQuizResult();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function showQuizResult() {
+  const correct = quizAnswers.filter(Boolean).length;
+  const total = quizAnswers.length;
+  const pct = Math.round(correct/total*100);
+  const passed = pct >= 67;
+  if (passed) markComplete(currentQuizClass);
+
+  document.getElementById('quiz-pill').textContent = 'Resultado';
+  document.getElementById('quiz-content-area').innerHTML = `
+    <div class="quiz-result">
+      <div class="result-score" style="color:${passed?'var(--success)':'var(--danger)'}">${correct}/${total}</div>
+      <div class="result-label">${pct}% correcto</div>
+      <div class="result-msg">${passed
+        ? 'Muy bien. La clase quedó marcada como completada.'
+        : 'Podés repasar el contenido y volver a intentarlo cuando quieras.'
+      }</div>
+      <button class="btn-primary" onclick="afterQuiz(${passed})">${passed ? 'Continuar →' : 'Repasar la clase'}</button>
+      ${!passed ? `<button class="btn-secondary" onclick="startQuiz(${currentQuizClass})" style="margin-top:10px">Intentar de nuevo</button>` : ''}
+    </div>
+  `;
+  document.getElementById('quiz-nav-area').innerHTML = '';
+}
+
+function afterQuiz(passed) {
+  if (passed) {
+    const all = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+    const idx = all.indexOf(currentQuizClass);
+    if (idx < all.length-1) {
+      openClass(all[idx+1]);
+    } else {
+      goHome();
+    }
+  } else {
+    openClass(currentQuizClass);
+  }
+}
+
+function showLab() { showScreen('lab-view'); }
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('show');
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+renderHome();
+</script>
+</body>
+</html>
