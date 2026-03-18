@@ -1,4 +1,4 @@
-const CACHE = 'calderas-v2';
+const CACHE = 'calderas-v3';
 const STATIC = [
   '/',
   '/index.html',
