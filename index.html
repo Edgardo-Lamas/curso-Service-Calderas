@@ -248,6 +248,19 @@ body {
 }
 .module-prog-bar { height: 3px; background: var(--bg3); }
 .module-prog-fill { height: 100%; transition: width .5s ease; }
+.module-card.locked { opacity: 0.5; cursor: default; }
+.module-card.locked:active { border-color: var(--border); }
+.module-badge.locked { color: var(--muted); background: var(--bg3); letter-spacing: 0; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); padding: 10px 20px; border-radius: 10px;
+  font-size: 0.82rem; opacity: 0; transition: opacity .22s, transform .22s;
+  pointer-events: none; z-index: 9999; white-space: nowrap; text-align: center;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* Lab card */
 .lab-card {
@@ -698,6 +711,8 @@ body {
   </div>
   <div style="padding:20px;flex:1;overflow-y:auto" id="lab-main"></div>
 </div>
+
+<div id="toast"></div>
 
 <!-- BADGE OVERLAY -->
 <div id="badge-overlay" class="hidden">
@@ -1427,6 +1442,20 @@ function markComplete(classId) {
 }
 function isComplete(classId) { return !!getProgress()[classId]; }
 function countComplete() { return Object.keys(getProgress()).length; }
+function isModuleLocked(modId) {
+  if (modId <= 1) return false;
+  const prev = MODULES.find(x => x.id === modId - 1);
+  return !prev.classes.every(c => isComplete(c));
+}
+
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
 
 // ── IDENTIDAD DEL ALUMNO ──────────────────────────────────────────────────────
 function getAlumno() {
@@ -1530,24 +1559,29 @@ function renderHome() {
   MODULES.forEach(m => {
     const done_m = m.classes.filter(c => isComplete(c)).length;
     const pct_m = Math.round(done_m/m.classes.length*100);
+    const locked = isModuleLocked(m.id);
     const card = document.createElement('div');
-    card.className = 'module-card';
+    card.className = 'module-card' + (locked ? ' locked' : '');
     card.innerHTML = `
       <div class="module-header" onclick="openModule(${m.id})">
-        <div class="module-dot" style="background:${m.color}"></div>
+        <div class="module-dot" style="background:${locked ? 'var(--muted)' : m.color}"></div>
         <div class="module-info">
           <div class="module-name">Módulo ${m.id} — ${m.name}</div>
           <div class="module-sub">${m.sub}</div>
         </div>
-        <div class="module-badge">${done_m}/${m.classes.length}</div>
+        <div class="module-badge${locked ? ' locked' : ''}">${locked ? '🔒' : done_m+'/'+m.classes.length}</div>
       </div>
-      <div class="module-prog-bar"><div class="module-prog-fill" style="width:${pct_m}%;background:${m.color}"></div></div>
+      <div class="module-prog-bar"><div class="module-prog-fill" style="width:${locked ? 0 : pct_m}%;background:${m.color}"></div></div>
     `;
     wrap.appendChild(card);
   });
 }
 
 function openModule(modId) {
+  if (isModuleLocked(modId)) {
+    showToast('🔒 Aprobá el Módulo ' + (modId - 1) + ' para desbloquear este');
+    return;
+  }
   currentModule = modId;
   const m = MODULES.find(x => x.id === modId);
   document.getElementById('mod-list-label').textContent = 'Módulo ' + modId + ' de 5';
