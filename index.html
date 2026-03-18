@@ -529,6 +529,53 @@ body {
 }
 .lab-result-detail { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
 @keyframes errBlink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* ── SIMULATOR v2 ── */
+.sim-comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.sim-comp-btn {
+  padding: 13px 11px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; text-align: left; position: relative;
+  font-family: 'IBM Plex Sans', sans-serif; transition: border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sim-comp-btn:active { background: var(--bg3); }
+.sim-comp-btn.tested-ok  { border-color: rgba(52,201,122,.6); background: rgba(52,201,122,.06); }
+.sim-comp-btn.tested-bad { border-color: rgba(240,90,90,.6);  background: rgba(240,90,90,.06); }
+.sim-comp-btn.tested-note{ border-color: rgba(245,166,35,.5); background: rgba(245,166,35,.05); }
+.sim-comp-icon { font-size: 1.2rem; margin-bottom: 5px; display: block; }
+.sim-comp-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
+.sim-comp-sub  { font-size: 0.7rem; color: var(--muted); line-height: 1.3; }
+.sim-comp-flag { font-size: 0.68rem; font-family: 'IBM Plex Mono', monospace; margin-top: 5px; font-weight: 700; }
+.sim-comp-flag.ok   { color: var(--success); }
+.sim-comp-flag.bad  { color: var(--danger); }
+.sim-comp-flag.note { color: var(--warn); }
+.sim-readout {
+  background: #0a0e1a; border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px;
+}
+.sim-readout-label { font-size: 0.68rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; letter-spacing:.07em; text-transform:uppercase; margin-bottom: 6px; }
+.sim-readout-comp  { font-size: 0.92rem; font-weight: 600; margin-bottom: 8px; }
+.sim-readout-data  { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: #a8c4ff; white-space: pre-wrap; }
+.sim-cascade-row   { display: flex; gap: 5px; margin-bottom: 4px; flex-wrap: wrap; }
+.sim-cs {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.7rem; font-family: 'IBM Plex Mono', monospace;
+  padding: 4px 8px; border-radius: 20px;
+}
+.sim-cs-ok   { background: rgba(52,201,122,.12); color: var(--success); border: 1px solid rgba(52,201,122,.25); }
+.sim-cs-fail { background: rgba(240,90,90,.12); color: var(--danger); border: 1px solid rgba(240,90,90,.3); }
+.sim-cs-pend { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); opacity:.6; }
+.sim-diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.sim-diag-btn {
+  padding: 13px 10px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; text-align: center;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+  transition: border-color .15s; -webkit-tap-highlight-color: transparent;
+}
+.sim-diag-btn:active { background: var(--bg3); }
+.sim-diag-btn.correct { border-color: var(--success); background: rgba(52,201,122,.12); color: var(--success); pointer-events:none; }
+.sim-diag-btn.wrong   { border-color: var(--danger); background: rgba(240,90,90,.1); color: var(--danger); pointer-events:none; }
+.sim-hint { font-size: 0.78rem; color: var(--muted); text-align:center; padding: 10px; }
 </style>
 </head>
 <body>
@@ -1732,226 +1779,451 @@ function afterQuiz(passed) {
   }
 }
 
-// ── LAB SIMULATOR DATA ────────────────────────────────────────────────────────
-const LAB_FAULTS = [
-  { code: 'E1', name: 'Falta presión de agua',       color: '#4f8ef7' },
-  { code: 'E2', name: 'Falla de encendido',           color: '#f5a623' },
-  { code: 'E3', name: 'Falla sensor calefacción',     color: '#c46af7' },
-  { code: 'E4', name: 'Falla sensor ACS',             color: '#34c97a' },
-  { code: 'E6', name: 'Falla en salida de humos',     color: '#f06a4a' },
-  { code: 'E7', name: 'Sobretemperatura',             color: '#f05a5a' },
+// ── SIMULADOR DE DIAGNÓSTICO BGL188 ──────────────────────────────────────────
+//  El alumno ve solo el error. Decide qué medir. Sintetiza las lecturas. Diagnostica.
+
+const SIM_COMPS = [
+  { id: 'ventilador',   icon: '🌀', name: 'Ventilador',          sub: 'Motor · hélice · eje' },
+  { id: 'presostato_h', icon: '💨', name: 'Presostato de humos', sub: 'Diferencial de presión' },
+  { id: 'electrodo',    icon: '⚡', name: 'Electrodo / Chispa',  sub: 'Unidad de encendido' },
+  { id: 'gas',          icon: '🔥', name: 'Gas / Válvula',       sub: 'Suministro y electroválvula' },
+  { id: 'presion_agua', icon: '💧', name: 'Presión de agua',     sub: 'Circuito primario' },
+  { id: 'sensor_cal',   icon: '🌡', name: 'Sensor calefacción',  sub: 'NTC temperatura' },
+  { id: 'bomba',        icon: '⚙', name: 'Bomba circuladora',   sub: 'Caudal y motor' },
+  { id: 'plaqueta',     icon: '🖥', name: 'Plaqueta BGL188',     sub: 'Unidad de control' },
 ];
 
-const LAB_TREES = {
-  E1: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿El manómetro del circuito primario indica presión ≥ 1 bar?', yes: 'n2', no: 'n3' },
-      n2: { q: '¿El presostato de agua cierra el circuito correctamente al medirlo con tester?', yes: 'r1', no: 'r2' },
-      n3: { q: '¿Al abrir el grifo de llenado la presión del manómetro sube?', yes: 'r3', no: 'r4' },
-      r1: { result: true, comp: 'Plaqueta BGL188', action: 'Reemplazar plaqueta BGL188', detail: 'La presión es correcta y el presostato cierra bien, pero la plaqueta no reconoce la señal. Falla interna en la plaqueta.' },
-      r2: { result: true, comp: 'Presostato de agua', action: 'Reemplazar presostato de agua', detail: 'La presión es suficiente pero el presostato no cierra el circuito. Componente defectuoso o manguito obstruido.' },
-      r3: { result: true, comp: 'Circuito hidráulico', action: 'Presurizar a 1.5 bar y verificar pérdidas', detail: 'El circuito perdió agua. Presurizarlo a 1.5 bar y revisar radiadores, llaves y uniones en busca de pérdidas.' },
-      r4: { result: true, comp: 'Grifo de llenado', action: 'Revisar / reemplazar grifo de llenado', detail: 'El grifo de llenado puede estar obstruido o el circuito tiene una pérdida importante que requiere revisión profesional.' },
-    }
+// Cada escenario define:
+//   cascade: pasos de arranque y su estado (ok / false / null = no alcanzado)
+//   comps: resultado de medir cada componente. type: 'ok'|'bad'|'note'
+//   answer: id del componente defectuoso real
+const SIM_SCENARIOS = [
+  {
+    id: 'vent_trabado',
+    errorCode: 'E2',
+    errorName: 'Falla de encendido',
+    title: 'Ventilador bloqueado',
+    scenario: 'La caldera recibe demanda de calefacción. Intenta arrancar tres veces. No enciende. Display: E2.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: true  },
+      { label: 'Ventilador', ok: false },
+      { label: 'P.Humos', ok: null  },
+      { label: 'Gas', ok: null  },
+      { label: 'Chispa', ok: null  },
+      { label: 'Llama', ok: null  },
+    ],
+    comps: {
+      ventilador:   { type:'bad',  data: 'Tensión en bornes:    220 V  ✓\nRotación:            NINGUNA ✗\nEje (a mano):        TRABADO ✗\nSonido al activar:   SILENCIO TOTAL\n─────────────────────────────\nEje bloqueado — cal o rodamiento\nEl motor recibe tensión pero no puede girar' },
+      presostato_h: { type:'note', data: 'Ventilador en marcha: NO\nFlujo de aire:        AUSENTE\nEstado presostato:    ABIERTO ✗\n─────────────────────────────\nNo activa porque el ventilador no gira\nNota: causa aguas arriba, no el origen' },
+      electrodo:    { type:'note', data: 'Etapa de encendido:   NO ALCANZADA\nRazón: presostato de humos nunca\nconfirmó → plaqueta abortó el ciclo\nantes de activar el electrodo' },
+      gas:          { type:'note', data: 'Etapa de gas:         NO ALCANZADA\nRazón: ciclo abortado antes del encendido\n(presostato humos no confirmó)' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.4 bar  ✓\nPresostato agua:      CIERRA   ✓\nFuncionamiento:       CORRECTO' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia NTC:      2.18 kΩ @ 25°C  ✓\nRango normal:         1.5 – 3.5 kΩ @ 25°C\nFuncionamiento:       CORRECTO' },
+      bomba:        { type:'note', data: 'Bomba:                no activada aún\nEl ciclo de calefacción no llegó\na la etapa de circulación' },
+      plaqueta:     { type:'ok',   data: 'Alimentación:         220 V  ✓\nCmd ventilador:       activo ✓\nE2 generado:          timeout — ventilador\n                      no respondió\nNota: falla es EXTERNA a la plaqueta' },
+    },
+    answer: 'ventilador',
+    action: 'Destrabar el eje manualmente o reemplazar el ventilador',
+    explanation: 'El eje del ventilador está trabado (cal acumulada o rodamiento fundido). La plaqueta envía el comando y hay 220V en los bornes, pero el rotor no puede girar. Sin ventilador en marcha, el presostato de humos no tiene flujo de aire para activarse → la plaqueta no autoriza la apertura de la válvula de gas ni el encendido → E2 después de 3 intentos.',
   },
-  E2: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿El ventilador arranca al intentar encender la caldera?', yes: 'n2', no: 'n5' },
-      n2: { q: '¿El presostato de humos activa (cierra circuito) con el ventilador en marcha?', yes: 'n3', no: 'n7' },
-      n3: { q: '¿Se escucha chispa en el electrodo durante el intento de encendido?', yes: 'n4', no: 'n8' },
-      n4: { q: '¿La distancia entre el electrodo y la rampa del quemador es de ~3 mm?', yes: 'n9', no: 'r4' },
-      n5: { q: '¿Hay 220 V en el conector del ventilador en la plaqueta?', yes: 'r1', no: 'r2' },
-      n7: { q: '¿Las paletas del ventilador están sucias u obstruidas?', yes: 'r5', no: 'r6' },
-      n8: { q: '¿Hay 220 V en la unidad de encendido?', yes: 'r7', no: 'r8' },
-      n9: { q: '¿Hay suministro de gas (presión estática ~200 mm c.a.)?', yes: 'r9', no: 'r10' },
-      r1:  { result: true, comp: 'Ventilador / Motor', action: 'Destrabar o reemplazar el ventilador', detail: 'Hay tensión pero el ventilador no gira: eje trabado o motor quemado. Intentar destrabar manualmente con destornillador en la ranura del eje; si no arranca, reemplazar.' },
-      r2:  { result: true, comp: 'Cableado plaqueta–ventilador', action: 'Verificar y reconectar el cableado', detail: 'Sin 220 V en el conector del ventilador. Revisar cable y conector en la plaqueta BGL188; posible cable cortado o conector suelto.' },
-      r4:  { result: true, comp: 'Electrodo de encendido', action: 'Ajustar separación electrodo–rampa a 3 mm', detail: 'Una separación incorrecta impide la formación del arco. Ajustar la distancia electrodo–rampa a 3 mm con calibre; verificar también que el electrodo no esté agrietado.' },
-      r5:  { result: true, comp: 'Ventilador / Presostato de humos', action: 'Limpiar ventilador y verificar manguito del presostato', detail: 'El ventilador sucio no genera suficiente presión para activar el presostato. Limpiar las paletas y verificar que el manguito de goma del presostato no esté pinchado ni suelto.' },
-      r6:  { result: true, comp: 'Presostato de humos', action: 'Reemplazar presostato de humos', detail: 'El ventilador gira bien pero el presostato no activa. Presostato defectuoso.' },
-      r7:  { result: true, comp: 'Unidad de encendido', action: 'Reemplazar unidad de encendido', detail: 'Hay tensión en la unidad pero no genera chispa: unidad de encendido defectuosa.' },
-      r8:  { result: true, comp: 'Cableado plaqueta–unidad de encendido', action: 'Verificar cableado de la unidad de encendido', detail: 'Sin 220 V en la unidad de encendido. Revisar cable y conector entre plaqueta y unidad.' },
-      r9:  { result: true, comp: 'Plaqueta BGL188 / Válvula de gas', action: 'Verificar tensión en bobina de válvula', detail: 'Todo el sistema responde pero no hay llama. Medir tensión en la bobina de la válvula de gas durante el intento de encendido: si hay tensión → reemplazar válvula; si no → reemplazar plaqueta BGL188.' },
-      r10: { result: true, comp: 'Suministro de gas', action: 'Verificar instalación de gas', detail: 'Sin presión de gas estática (~200 mm c.a.). Controlar que las llaves de paso estén abiertas y verificar la presión en la red con manómetro.' },
-    }
+  {
+    id: 'psw_defect',
+    errorCode: 'E6',
+    errorName: 'Falla en salida de humos',
+    title: 'Presostato de humos defectuoso',
+    scenario: 'Caldera intenta arrancar. Se escucha el ventilador funcionando. Falla sin llegar al encendido. Display: E6.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: true  },
+      { label: 'Ventilador', ok: true  },
+      { label: 'P.Humos', ok: false },
+      { label: 'Gas', ok: null  },
+      { label: 'Chispa', ok: null  },
+      { label: 'Llama', ok: null  },
+    ],
+    comps: {
+      ventilador:   { type:'ok',   data: 'Tensión en bornes:    220 V  ✓\nRotación:            NORMAL ✓  (~2800 rpm)\nFlujo de aire (tacto):PRESENTE ✓\nSonido:              normal, constante' },
+      presostato_h: { type:'bad',  data: 'Ventilador en marcha: SÍ\nFlujo de aire:        PRESENTE y normal ✓\nEstado presostato:    ABIERTO  ✗\nMedición directa:     circuito siempre\n                      ABIERTO en ambas\n                      condiciones ✗\n─────────────────────────────\nComponente defectuoso — no cierra\naun con flujo de aire correcto' },
+      electrodo:    { type:'note', data: 'Etapa de encendido:   NO ALCANZADA\nRazón: presostato de humos no confirmó\n→ plaqueta no autorizó la etapa\nde chispa y gas (seguridad)' },
+      gas:          { type:'note', data: 'Etapa de gas:         NO ALCANZADA\n(mismo motivo: ciclo bloqueado\nen paso de presostato de humos)' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.3 bar  ✓\nPresostato agua:      CIERRA   ✓\nFuncionamiento:       CORRECTO' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia NTC:      2.20 kΩ @ 25°C  ✓\nFuncionamiento:       CORRECTO' },
+      bomba:        { type:'note', data: 'Bomba:                no activada\nCiclo no llegó a etapa de circulación' },
+      plaqueta:     { type:'ok',   data: 'Alimentación:         220 V  ✓\nCmd ventilador:       activo ✓\nVentilador:           respondió ✓\nE6 generado:          timeout — presostato\n                      de humos no confirmó\nNota: falla EXTERNA a la plaqueta' },
+    },
+    answer: 'presostato_h',
+    action: 'Verificar manguito de goma del presostato. Si el manguito está bien, reemplazar presostato de humos',
+    explanation: 'El ventilador funciona correctamente y genera flujo de aire, pero el presostato de humos no cierra su contacto. La plaqueta espera la confirmación del presostato antes de autorizar gas y encendido (seguridad anti-fuga). Sin esa señal → E6. Primero verificar el manguito de conexión (puede estar pinchado o suelto), luego si todo está bien reemplazar el presostato.',
   },
-  E3: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿El sensor de calefacción (NTC) tiene continuidad y su resistencia está dentro del rango esperado?', yes: 'n2', no: 'r1' },
-      n2: { q: '¿El cable entre el sensor y la plaqueta está en buen estado (sin cortes ni cortocircuitos)?', yes: 'n3', no: 'r2' },
-      n3: { q: '¿El conector del sensor en la plaqueta está firmemente asentado?', yes: 'r3', no: 'r4' },
-      r1: { result: true, comp: 'Sensor de calefacción (NTC)', action: 'Reemplazar sensor de calefacción', detail: 'Sin continuidad o resistencia fuera de rango. El sensor NTC de temperatura de calefacción está defectuoso. Reemplazar por uno del mismo valor nominal.' },
-      r2: { result: true, comp: 'Cableado sensor–plaqueta', action: 'Reparar o reemplazar el cableado del sensor', detail: 'Corte o cortocircuito en el cable del sensor. Reparar el tramo dañado o reemplazar el cable completo hasta la plaqueta.' },
-      r3: { result: true, comp: 'Plaqueta BGL188', action: 'Reemplazar plaqueta BGL188', detail: 'Sensor y cableado en buen estado, conector correctamente asentado. La falla es interna a la plaqueta BGL188.' },
-      r4: { result: true, comp: 'Conector sensor en plaqueta', action: 'Reconectar y asegurar el conector', detail: 'El conector suelto genera señal errática. Reconectar firmemente y verificar que no haya óxido en los pines; limpiar con contacto limpio si es necesario.' },
-    }
+  {
+    id: 'sin_gas',
+    errorCode: 'E2',
+    errorName: 'Falla de encendido',
+    title: 'Sin suministro de gas',
+    scenario: 'Caldera arranca normalmente: ventilador gira, se escucha el "click" de la chispa, pero no enciende. Tres intentos fallidos. Display: E2.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: true  },
+      { label: 'Ventilador', ok: true  },
+      { label: 'P.Humos', ok: true  },
+      { label: 'Gas', ok: false },
+      { label: 'Chispa', ok: true  },
+      { label: 'Llama', ok: false },
+    ],
+    comps: {
+      ventilador:   { type:'ok',   data: 'Tensión:              220 V  ✓\nRotación:             NORMAL ✓' },
+      presostato_h: { type:'ok',   data: 'Con ventilador en marcha: CIERRA ✓\nCircuito cerrado correctamente ✓' },
+      electrodo:    { type:'ok',   data: 'Unidad de encendido:  activa ✓\nChispa:               PRESENTE ✓\nArco visible en rampa: SÍ ✓\nSeparación electrodo: ~3 mm  ✓\nPorcelana:            íntegra ✓' },
+      gas:          { type:'bad',  data: 'Tensión en bobina:    220 V  ✓\nVálvula:              comando OK ✓\nPresión estática red: 0 mm c.a.  ✗\n─────────────────────────────\nSUMINISTRO DE GAS: AUSENTE ✗\nLlave de paso:        CERRADA\nVerificar llave principal y de\ncorte en la instalación' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.4 bar  ✓\nPresostato agua:      CIERRA   ✓' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia NTC:      2.15 kΩ @ 25°C  ✓\nFuncionamiento:       CORRECTO' },
+      bomba:        { type:'note', data: 'Bomba:                no activada aún\n(ciclo no alcanzó etapa de circulación)' },
+      plaqueta:     { type:'ok',   data: 'Todo el pre-encendido: correcto ✓\nChispa:               detectada ✓\nIonización:           NO detectada\nE2 tras 3 intentos sin llama\nBuscar falla post-válvula (gas)' },
+    },
+    answer: 'gas',
+    action: 'Verificar llave de paso principal y de corte del ramal. Medir presión estática con manómetro de gas',
+    explanation: 'Toda la cascada de pre-encendido funciona correctamente: ventilador, presostato, válvula recibe comando y hay chispa. Pero la presión estática en el ramal es cero — no hay gas. La llama nunca se establece, la ionización no confirma, y la plaqueta genera E2 después de 3 intentos. Solución: verificar llaves de paso, no componentes eléctricos.',
   },
-  E4: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿El sensor de ACS (NTC) tiene continuidad y su resistencia está dentro del rango esperado?', yes: 'n2', no: 'r1' },
-      n2: { q: '¿El cable entre el sensor ACS y la plaqueta está en buen estado?', yes: 'n3', no: 'r2' },
-      n3: { q: '¿El conector del sensor ACS en la plaqueta está firmemente asentado?', yes: 'r3', no: 'r4' },
-      r1: { result: true, comp: 'Sensor de ACS (NTC)', action: 'Reemplazar sensor de ACS', detail: 'Sin continuidad o resistencia fuera de rango. El sensor NTC de agua caliente sanitaria está defectuoso. Reemplazar por uno del mismo valor nominal.' },
-      r2: { result: true, comp: 'Cableado sensor ACS–plaqueta', action: 'Reparar o reemplazar el cableado del sensor ACS', detail: 'Corte o cortocircuito en el cable del sensor ACS. Reparar o reemplazar el cable completo.' },
-      r3: { result: true, comp: 'Plaqueta BGL188', action: 'Reemplazar plaqueta BGL188', detail: 'Sensor ACS y cableado en buen estado, conector bien asentado. La falla es interna a la plaqueta BGL188.' },
-      r4: { result: true, comp: 'Conector sensor ACS en plaqueta', action: 'Reconectar y asegurar el conector ACS', detail: 'Conector suelto en la plaqueta. Reconectar firmemente y revisar los pines.' },
-    }
+  {
+    id: 'electrodo_mal',
+    errorCode: 'E2',
+    errorName: 'Falla de encendido',
+    title: 'Electrodo fuera de posición',
+    scenario: 'Caldera intenta encender. Ventilador OK, ningún "click" de chispa durante el intento. Tres intentos. Display: E2.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: true  },
+      { label: 'Ventilador', ok: true  },
+      { label: 'P.Humos', ok: true  },
+      { label: 'Gas', ok: null  },
+      { label: 'Chispa', ok: false },
+      { label: 'Llama', ok: null  },
+    ],
+    comps: {
+      ventilador:   { type:'ok',   data: 'Tensión:              220 V  ✓\nRotación:             NORMAL ✓' },
+      presostato_h: { type:'ok',   data: 'Con ventilador en marcha: CIERRA ✓' },
+      electrodo:    { type:'bad',  data: 'Unidad de encendido:  activa ✓\nChispa:               AUSENTE ✗\nSeparación electrodo-rampa: 8 mm ✗\n   (valor correcto: ~3 mm)\nPorcelana:            íntegra, sin grietas\n─────────────────────────────\nSeparación excesiva: el arco\neléctrico no puede saltar\nPosible causa: golpe o vibración' },
+      gas:          { type:'note', data: 'Válvula de gas:       no activa aún\nLa plaqueta no abre la válvula\nhasta confirmar chispa presente\n(seguridad anti-fuga de gas)' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.4 bar  ✓\nPresostato agua:      CIERRA   ✓' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia NTC:      2.19 kΩ @ 25°C  ✓' },
+      bomba:        { type:'note', data: 'No activada aún\n(ciclo no alcanzó etapa de circulación)' },
+      plaqueta:     { type:'ok',   data: 'Cmd encendido:        activo ✓\nUnidad encendido:     recibe señal ✓\nE2: sin ionización tras 3 intentos\nChispa no se produjo → revisar\nelectrodo o unidad de encendido' },
+    },
+    answer: 'electrodo',
+    action: 'Ajustar separación electrodo–rampa a 3 mm con calibre. Verificar que la porcelana no esté agrietada',
+    explanation: 'La unidad de encendido funciona y envía alta tensión, pero la separación electrodo-rampa está a 8 mm en vez de 3 mm — el arco no puede saltar esa distancia. Sin chispa, la plaqueta no autoriza la apertura de la válvula de gas (sistema de seguridad) y genera E2. Ajustar la posición del electrodo es la corrección. Si el electrodo vuelve a moverse, verificar el soporte.',
   },
-  E6: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿El ventilador gira normalmente al intentar encender?', yes: 'n2', no: 'n5' },
-      n2: { q: '¿El presostato de humos activa cuando el ventilador está en plena marcha?', yes: 'n3', no: 'n6' },
-      n3: { q: '¿Se detecta olor o manchas que indiquen filtración de gases de combustión?', yes: 'r3', no: 'r4' },
-      n5: { q: '¿Hay 220 V en el conector del ventilador en la plaqueta?', yes: 'r1', no: 'r2' },
-      n6: { q: '¿Las paletas del ventilador están limpias y el conducto de humos sin obstrucción?', yes: 'r5', no: 'r6' },
-      r1: { result: true, comp: 'Ventilador', action: 'Destrabar o reemplazar el ventilador', detail: 'Hay tensión pero el ventilador no gira. Intentar destrabar el eje manualmente; si está quemado o no arranca, reemplazar el conjunto.' },
-      r2: { result: true, comp: 'Cableado plaqueta–ventilador', action: 'Verificar cableado del ventilador', detail: 'Sin 220 V en el ventilador. Revisar cable y conector en la plaqueta BGL188.' },
-      r3: { result: true, comp: 'Caño / sellado de salida de humos', action: 'Verificar sellado y estanqueidad de la salida de humos', detail: 'Filtración de gases de combustión. Revisar todos los sellos, uniones, el caño coaxial o de conducto dividido. Utilizar humo de prueba si es necesario.' },
-      r4: { result: true, comp: 'Plaqueta BGL188', action: 'Reemplazar plaqueta BGL188', detail: 'Ventilador y presostato funcionan correctamente, sin filtraciones. La plaqueta interpreta erróneamente la señal del presostato de humos. Falla interna.' },
-      r5: { result: true, comp: 'Presostato de humos', action: 'Reemplazar presostato de humos', detail: 'Ventilador limpio y funcional pero el presostato no activa. Presostato defectuoso o manguito de goma desconectado/pinchado.' },
-      r6: { result: true, comp: 'Ventilador (suciedad) / Conducto', action: 'Limpiar ventilador y verificar conducto de evacuación', detail: 'Paletas sucias o conducto parcialmente bloqueado reducen el caudal de aire impidiendo que el presostato active. Limpiar y despejar el conducto.' },
-    }
+  {
+    id: 'sensor_cal_fail',
+    errorCode: 'E3',
+    errorName: 'Falla sensor de calefacción',
+    title: 'Sensor NTC en cortocircuito',
+    scenario: 'Caldera no arranca en absoluto. Sin ruido de ventilador, sin intentos de encendido. Display fijo: E3.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: false },
+      { label: 'Ventilador', ok: null  },
+      { label: 'P.Humos', ok: null  },
+      { label: 'Gas', ok: null  },
+      { label: 'Chispa', ok: null  },
+      { label: 'Llama', ok: null  },
+    ],
+    comps: {
+      ventilador:   { type:'note', data: 'No activado\nLa plaqueta bloqueó el ciclo en E3\nantes de intentar el arranque' },
+      presostato_h: { type:'note', data: 'No evaluable\nCiclo bloqueado por E3' },
+      electrodo:    { type:'note', data: 'No evaluable\nCiclo bloqueado por E3' },
+      gas:          { type:'note', data: 'No evaluable\nCiclo bloqueado por E3' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.3 bar  ✓\nPresostato agua:      CIERRA   ✓' },
+      sensor_cal:   { type:'bad',  data: 'Resistencia medida:   0 Ω  ✗\n─────────────────────────────\nCORTOCIRCUITO detectado\nCausa: cable pelado en contacto\ncon masa, o sensor fundido\nValor normal @ 25°C: 1.5 – 3.5 kΩ\nEl 0Ω indica temperatura irreal\n(∞ negativo) → plaqueta bloquea\npor seguridad de sobretemperatura' },
+      bomba:        { type:'note', data: 'No activada\nCiclo bloqueado por E3' },
+      plaqueta:     { type:'ok',   data: 'Alimentación:         220 V  ✓\nE3: sensor calefacción fuera de\nrango (cortocircuito detectado)\nPlaqueta funciona correctamente\nBloquea como medida de seguridad' },
+    },
+    answer: 'sensor_cal',
+    action: 'Revisar el cable del sensor: buscar tramo pelado en contacto con masa. Si el cable está bien, reemplazar el sensor NTC',
+    explanation: 'El sensor NTC de calefacción mide 0Ω (cortocircuito) en vez de ~2kΩ. Para la plaqueta, esto equivale a una temperatura extrema (miles de grados), por lo que activa E3 como bloqueo de seguridad antes de intentar cualquier arranque. El cortocircuito puede estar en el cable (aislación rota tocando la carcasa de metal) o en el sensor mismo.',
   },
-  E7: {
-    start: 'n1',
-    nodes: {
-      n1: { q: '¿La bomba circuladora funciona (se siente vibración o se escucha el motor)?', yes: 'n2', no: 'n4' },
-      n2: { q: '¿Hay diferencia de temperatura entre el caño de ida y el de retorno (≥ 10°C)?', yes: 'n3', no: 'r4' },
-      n3: { q: '¿El seteo de temperatura de calefacción en el tablero supera los 80°C?', yes: 'r5', no: 'r3' },
-      n4: { q: '¿Hay 220 V en la conexión de la bomba en la plaqueta?', yes: 'n5', no: 'r1' },
-      n5: { q: '¿El eje de la bomba gira libremente (probar con destornillador en la ranura)?', yes: 'r2', no: 'r6' },
-      r1: { result: true, comp: 'Cableado plaqueta–bomba', action: 'Verificar cableado de la bomba circuladora', detail: 'Sin 220 V en la bomba. Revisar cable y conector en la plaqueta BGL188; posible corte o conector suelto.' },
-      r2: { result: true, comp: 'Bomba circuladora', action: 'Reemplazar bomba circuladora', detail: 'Hay tensión y el eje gira pero la bomba no genera caudal suficiente. Bomba defectuosa internamente.' },
-      r3: { result: true, comp: 'Plaqueta BGL188 / Sensor calefacción', action: 'Verificar sensor de calefacción y plaqueta', detail: 'Buena circulación, seteo correcto, pero sobretemperatura igual. Verificar la calibración del sensor NTC y la plaqueta BGL188.' },
-      r4: { result: true, comp: 'Bomba circuladora (sin caudal real)', action: 'Revisar llaves de corte y destrabar bomba', detail: 'La bomba gira pero no circula agua. Verificar que las llaves de paso del circuito estén totalmente abiertas y que el rotor no esté obstruido por cal.' },
-      r5: { result: true, comp: 'Configuración de temperatura', action: 'Reducir seteo de calefacción a ≤ 80°C', detail: 'El seteo por encima de 80–85°C puede disparar el termostato de seguridad en condiciones normales. Reducir la temperatura en el tablero BGL188.' },
-      r6: { result: true, comp: 'Bomba circuladora (trabada)', action: 'Destrabar la bomba manualmente', detail: 'El eje de la bomba está trabado, probablemente por cal o inactividad prolongada. Destrabar con destornillador plano en la ranura frontal del eje. Si no cede, reemplazar.' },
-    }
+  {
+    id: 'baja_presion',
+    errorCode: 'E1',
+    errorName: 'Falta presión de agua',
+    title: 'Circuito hidráulico despresurizado',
+    scenario: 'Caldera no arranca. Sin ruido alguno. El manómetro en el frente de la caldera está muy bajo. Display: E1.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: false },
+      { label: 'Sensores', ok: null  },
+      { label: 'Ventilador', ok: null  },
+      { label: 'P.Humos', ok: null  },
+      { label: 'Gas', ok: null  },
+      { label: 'Chispa', ok: null  },
+      { label: 'Llama', ok: null  },
+    ],
+    comps: {
+      ventilador:   { type:'note', data: 'No activado\nCiclo bloqueado por E1\nantes de intentar el arranque' },
+      presostato_h: { type:'note', data: 'No evaluable\nCiclo bloqueado por E1' },
+      electrodo:    { type:'note', data: 'No evaluable\nCiclo bloqueado por E1' },
+      gas:          { type:'note', data: 'No evaluable\nCiclo bloqueado por E1' },
+      presion_agua: { type:'bad',  data: 'Manómetro:            0.4 bar  ✗\n   (mínimo para operar: ~0.8 bar)\n   (presión ideal: 1.2 – 1.5 bar)\nPresostato agua:      ABIERTO  ✗\n   (no cierra con menos de ~0.7 bar)\n─────────────────────────────\nCircuito hidráulico DESPRESURIZADO\nAcción: abrir grifo de llenado\nhasta alcanzar 1.5 bar y verificar\nsi hay pérdidas en la instalación' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia NTC:      2.18 kΩ @ 25°C  ✓' },
+      bomba:        { type:'note', data: 'No activada\nCiclo bloqueado por E1' },
+      plaqueta:     { type:'ok',   data: 'Alimentación:         220 V  ✓\nE1: presostato de agua no confirmó\npresión mínima de operación\nPlaqueta funciona correctamente' },
+    },
+    answer: 'presion_agua',
+    action: 'Presurizar el circuito a 1.5 bar desde el grifo de llenado. Verificar si hay pérdidas en radiadores, llaves o uniones',
+    explanation: 'La presión del circuito hidráulico cayó a 0.4 bar, posiblemente por una pérdida en la instalación o porque alguien cerró la llave de llenado sin recargar. El presostato de agua no cierra su contacto con esa presión, bloqueando todo el ciclo de arranque. No se trata de una falla eléctrica sino hidráulica.',
   },
-};
+  {
+    id: 'bomba_trabada',
+    errorCode: 'E7',
+    errorName: 'Sobretemperatura',
+    title: 'Bomba circuladora trabada',
+    scenario: 'Caldera enciende, la llama es visible y estable. A los 2–3 minutos dispara por sobretemperatura y apaga. Display: E7.',
+    cascade: [
+      { label: '220V', ok: true  },
+      { label: 'Presión', ok: true  },
+      { label: 'Sensores', ok: true  },
+      { label: 'Ventilador', ok: true  },
+      { label: 'P.Humos', ok: true  },
+      { label: 'Gas', ok: true  },
+      { label: 'Chispa', ok: true  },
+      { label: 'Llama', ok: false },
+    ],
+    comps: {
+      ventilador:   { type:'ok',   data: 'Tensión:              220 V  ✓\nRotación:             NORMAL ✓\nLlama estuvo presente antes\nde disparar la sobretemperatura' },
+      presostato_h: { type:'ok',   data: 'Con ventilador en marcha: CIERRA ✓' },
+      electrodo:    { type:'ok',   data: 'Chispa:               PRESENTE ✓\nEncendido:            normal ✓' },
+      gas:          { type:'ok',   data: 'Suministro:           ~195 mm c.a. ✓\nVálvula:              abre correctamente ✓\nLlama modulada:       presente ✓\nEl problema no está en el gas' },
+      presion_agua: { type:'ok',   data: 'Manómetro:            1.4 bar  ✓\nPresostato agua:      CIERRA   ✓' },
+      sensor_cal:   { type:'ok',   data: 'Resistencia inicial:  2.20 kΩ @ 25°C ✓\nNota: temperatura subió muy\nrápido durante el ciclo → indica\ncalor sin disipación (sin circulación)' },
+      bomba:        { type:'bad',  data: 'Tensión en bornes:    220 V  ✓\nMotor:                zumbido presente ✓\nEje (destornillador): TRABADO ✗\n                      no gira con la mano\nCaudal real:          CERO ✗\n─────────────────────────────\nMotor activo pero sin rotación\nCal acumulada en el rotor\nEl agua del intercambiador\nno circula → sobretemperatura\nen pocos minutos' },
+      plaqueta:     { type:'ok',   data: 'Alimentación:         220 V  ✓\nCmd bomba:            activo ✓\nE7: termostato de seguridad\ndisparado por sobretemperatura\nLa caldera funcionó hasta que\nel agua se recalentó sin circular' },
+    },
+    answer: 'bomba',
+    action: 'Destrabar el eje de la bomba con destornillador plano en la ranura frontal. Si no cede, reemplazar la bomba',
+    explanation: 'La bomba recibe tensión y el motor intenta girar (zumbido), pero el eje está bloqueado por cal acumulada durante inactividad. Sin caudal, el intercambiador de calor acumula temperatura sin disiparla, hasta que el termostato de seguridad dispara a ~100°C generando E7. El ciclo de combustión en sí funciona perfectamente.',
+  },
+];
 
-let labCurrentFault = null;
-let labCurrentNode = null;
-let labPath = [];
+let simScenario   = null;
+let simTested     = {};   // { compId: true }
+let simLastTest   = null; // { name, data }
+let simPhase      = 'selector'; // selector | testing | diagnosing | result
 
 function showLab() {
-  labCurrentFault = null;
-  labCurrentNode = null;
-  labPath = [];
-  renderLabSelector();
+  simPhase    = 'selector';
+  simScenario = null;
+  simTested   = {};
+  simLastTest = null;
+  simRender();
   showScreen('lab-view');
 }
 
-function renderLabSelector() {
+function simRender() {
+  switch(simPhase) {
+    case 'selector':   simRenderSelector();   break;
+    case 'testing':    simRenderTesting();     break;
+    case 'diagnosing': simRenderDiagnosing();  break;
+    case 'result':     /* rendered inline */   break;
+  }
+}
+
+function simRenderSelector() {
   document.getElementById('lab-pill').textContent = 'Lab';
-  const faultBtns = LAB_FAULTS.map(f =>
-    `<div class="lab-fault-btn" onclick="labSelectFault('${f.code}')">
-      <div class="lab-fault-code" style="color:${f.color}">${f.code}</div>
-      <div class="lab-fault-name">${f.name}</div>
-    </div>`
-  ).join('');
   document.getElementById('lab-main').innerHTML = `
     <div class="section-label" style="margin-bottom:6px">Laboratorio de diagnóstico</div>
     <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:18px">
-      Seleccioná el código de error que muestra el tablero BGL188 e iniciá el diagnóstico paso a paso según la lógica del manual PEISA.
+      La caldera tiene una falla inyectada. Ves solo el código de error.<br>
+      Medí los componentes con tu multímetro virtual y determiná el origen de la avería.
     </p>
-    <div class="lab-display" style="text-align:center;padding:18px">
-      <div style="font-size:0.72rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;margin-bottom:10px">TABLERO BGL188</div>
-      <div style="font-size:3rem;color:var(--danger);font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;animation:errBlink 1.5s ease-in-out infinite">E?</div>
-      <div style="font-size:0.78rem;color:var(--muted);margin-top:6px">Seleccioná un código para comenzar</div>
+    <div class="lab-display" style="text-align:center;padding:22px 20px;margin-bottom:18px">
+      <div style="font-size:0.68rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;margin-bottom:10px">TABLERO BGL188</div>
+      <div style="font-size:3.5rem;font-weight:700;color:var(--danger);font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;animation:errBlink 1.5s ease-in-out infinite">E?</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:8px">Comenzar para ver el código real</div>
     </div>
-    <div class="section-label" style="margin-bottom:12px">¿Qué código muestra la caldera?</div>
-    <div class="lab-fault-grid">${faultBtns}</div>
+    <button class="btn-primary" onclick="simStartRandom()" style="margin-bottom:10px">Iniciar diagnóstico aleatorio</button>
+    <button class="btn-secondary" onclick="simChooseScenario()">Elegir escenario de práctica</button>
   `;
 }
 
-function labSelectFault(code) {
-  labCurrentFault = LAB_FAULTS.find(f => f.code === code);
-  labCurrentNode = LAB_TREES[code].start;
-  labPath = [];
-  renderLabDiag();
+function simStartRandom() {
+  const idx = Math.floor(Math.random() * SIM_SCENARIOS.length);
+  simBegin(idx);
 }
 
-function renderLabDiag() {
-  const tree = LAB_TREES[labCurrentFault.code];
-  const node = tree.nodes[labCurrentNode];
-  if (node.result) { renderLabResult(node); return; }
-
-  document.getElementById('lab-pill').textContent = labCurrentFault.code;
-  const pathHtml = labPath.map(p =>
-    `<div class="lab-path-item">
-      <span class="lab-path-q">${p.q}</span>
-      <span class="${p.answer ? 'lab-path-yes' : 'lab-path-no'}">${p.answer ? 'SÍ' : 'NO'}</span>
-    </div>`
-  ).join('');
-
+function simChooseScenario() {
   document.getElementById('lab-main').innerHTML = `
-    <div class="lab-display" style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:2rem;font-family:'IBM Plex Mono',monospace;font-weight:700;color:${labCurrentFault.color};animation:errBlink 1.5s ease-in-out infinite">${labCurrentFault.code}</div>
+    <div class="section-label" style="margin-bottom:12px">Elegir escenario de práctica</div>
+    ${SIM_SCENARIOS.map((s,i) => `
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer" onclick="simBegin(${i})">
+        <div style="font-size:1.3rem;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--danger);min-width:34px">${s.errorCode}</div>
         <div>
-          <div style="font-size:0.85rem;font-weight:500">${labCurrentFault.name}</div>
-          <div style="font-size:0.72rem;color:var(--muted)">Tablero BGL188 · Diagnóstico activo</div>
+          <div style="font-size:0.88rem;font-weight:500">${s.title}</div>
+          <div style="font-size:0.75rem;color:var(--muted)">${s.errorName}</div>
         </div>
-      </div>
-    </div>
-    ${labPath.length > 0 ? `<div class="lab-path">${pathHtml}</div>` : ''}
-    <div class="lab-question-card">
-      <div class="lab-step-num">Paso ${labPath.length + 1} de diagnóstico</div>
-      <div class="lab-question">${node.q}</div>
-      <div class="lab-answer-btns">
-        <button class="lab-no-btn" onclick="labAnswer(false)">NO</button>
-        <button class="lab-yes-btn" onclick="labAnswer(true)">SÍ</button>
-      </div>
-    </div>
-    <button class="btn-secondary" onclick="showLab()">← Cambiar código de error</button>
+      </div>`).join('')}
+    <button class="btn-secondary" onclick="simPhase='selector';simRender()" style="margin-top:4px">← Volver</button>
   `;
 }
 
-function labAnswer(yes) {
-  const tree = LAB_TREES[labCurrentFault.code];
-  const node = tree.nodes[labCurrentNode];
-  labPath.push({ q: node.q, answer: yes });
-  labCurrentNode = yes ? node.yes : node.no;
-  renderLabDiag();
+function simBegin(idx) {
+  simScenario = SIM_SCENARIOS[idx];
+  simTested   = {};
+  simLastTest = null;
+  simPhase    = 'testing';
+  simRenderTesting();
 }
 
-function renderLabResult(node) {
-  const steps = labPath.length;
-  document.getElementById('lab-pill').textContent = labCurrentFault.code + ' · Dx';
-  const pathHtml = labPath.map(p =>
-    `<div class="lab-path-item">
-      <span class="lab-path-q">${p.q}</span>
-      <span class="${p.answer ? 'lab-path-yes' : 'lab-path-no'}">${p.answer ? 'SÍ' : 'NO'}</span>
-    </div>`
-  ).join('');
+function simRenderTesting() {
+  document.getElementById('lab-pill').textContent = simScenario.errorCode;
+
+  // Cascade chips
+  const cascadeHtml = simScenario.cascade.map(s => {
+    const cls = s.ok === true ? 'sim-cs-ok' : s.ok === false ? 'sim-cs-fail' : 'sim-cs-pend';
+    const icon = s.ok === true ? '✓' : s.ok === false ? '✗' : '—';
+    return `<span class="sim-cs ${cls}">${icon} ${s.label}</span>`;
+  }).join('');
+
+  // Component grid
+  const compHtml = SIM_COMPS.map(c => {
+    const t = simTested[c.id];
+    const d = simScenario.comps[c.id];
+    let cls = 'sim-comp-btn';
+    let flagHtml = '';
+    if (t && d) {
+      if (d.type === 'ok')   { cls += ' tested-ok';   flagHtml = `<div class="sim-comp-flag ok">✓ Normal</div>`; }
+      if (d.type === 'bad')  { cls += ' tested-bad';  flagHtml = `<div class="sim-comp-flag bad">✗ Anomalía</div>`; }
+      if (d.type === 'note') { cls += ' tested-note'; flagHtml = `<div class="sim-comp-flag note">⚠ Ver lectura</div>`; }
+    }
+    return `<div class="${cls}" onclick="simTest('${c.id}')">
+      <span class="sim-comp-icon">${c.icon}</span>
+      <div class="sim-comp-name">${c.name}</div>
+      <div class="sim-comp-sub">${c.sub}</div>
+      ${flagHtml}
+    </div>`;
+  }).join('');
+
+  const testedCount = Object.keys(simTested).length;
+  const readoutHtml = simLastTest
+    ? `<div class="sim-readout">
+        <div class="sim-readout-label">Lectura actual — multímetro / visual</div>
+        <div class="sim-readout-comp">${simLastTest.name}</div>
+        <div class="sim-readout-data">${simLastTest.data}</div>
+       </div>`
+    : `<div style="font-size:0.82rem;color:var(--muted);padding:12px 14px;background:var(--bg3);border-radius:var(--radius);margin-bottom:14px;line-height:1.5">Tocá un componente para medirlo.<br>Los resultados aparecerán aquí.</div>`;
 
   document.getElementById('lab-main').innerHTML = `
     <div class="lab-display" style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:2rem;font-family:'IBM Plex Mono',monospace;font-weight:700;color:${labCurrentFault.color}">${labCurrentFault.code}</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="text-align:center">
+          <div style="font-size:0.62rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:3px">BGL188</div>
+          <div style="font-size:2.4rem;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--danger);animation:errBlink 1.5s ease-in-out infinite;line-height:1">${simScenario.errorCode}</div>
+        </div>
         <div>
-          <div style="font-size:0.85rem;font-weight:500">${labCurrentFault.name}</div>
-          <div style="font-size:0.72rem;color:var(--success)">Diagnóstico completado · ${steps} paso${steps !== 1 ? 's' : ''}</div>
+          <div style="font-size:0.9rem;font-weight:600">${simScenario.errorName}</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:3px;line-height:1.4">${simScenario.scenario}</div>
         </div>
       </div>
+      <div style="font-size:0.65rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:6px;letter-spacing:.05em">CASCADA DE ARRANQUE</div>
+      <div class="sim-cascade-row">${cascadeHtml}</div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:10px">Medí los componentes</div>
+    <div class="sim-comp-grid">${compHtml}</div>
+
+    ${readoutHtml}
+
+    ${testedCount >= 2
+      ? `<button class="btn-primary" onclick="simStartDiag()">Emitir diagnóstico →</button>`
+      : `<div class="sim-hint">Medí al menos 2 componentes antes de diagnosticar</div>`}
+    <button class="btn-secondary" onclick="showLab()" style="margin-top:10px">Reiniciar simulador</button>
+  `;
+}
+
+function simTest(compId) {
+  simTested[compId] = true;
+  const comp = SIM_COMPS.find(c => c.id === compId);
+  const data = simScenario.comps[compId];
+  simLastTest = { name: comp.icon + ' ' + comp.name, data: data ? data.data : '—' };
+  simRenderTesting();
+}
+
+function simStartDiag() {
+  simPhase = 'diagnosing';
+  simRenderDiagnosing();
+}
+
+function simRenderDiagnosing() {
+  document.getElementById('lab-pill').textContent = simScenario.errorCode + ' · Dx';
+  const compHtml = SIM_COMPS.map(c =>
+    `<button class="sim-diag-btn" onclick="simSubmit('${c.id}')">${c.icon} ${c.name}</button>`
+  ).join('');
+  document.getElementById('lab-main').innerHTML = `
+    <div class="lab-display" style="margin-bottom:14px">
+      <div style="font-size:2rem;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--danger)">${simScenario.errorCode}</div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-top:2px">${simScenario.errorName}</div>
+    </div>
+    <div class="section-label" style="margin-bottom:12px">¿Cuál es el componente defectuoso?</div>
+    <div class="sim-diag-grid">${compHtml}</div>
+    <button class="btn-secondary" onclick="simPhase='testing';simRenderTesting()">← Seguir midiendo</button>
+  `;
+}
+
+function simSubmit(compId) {
+  const correct = compId === simScenario.answer;
+  const chosen  = SIM_COMPS.find(c => c.id === compId);
+  const right   = SIM_COMPS.find(c => c.id === simScenario.answer);
+  const tested  = Object.keys(simTested).length;
+
+  // Highlight buttons
+  document.querySelectorAll('.sim-diag-btn').forEach(btn => {
+    btn.classList.remove('correct','wrong');
+  });
+  const btns = document.querySelectorAll('.sim-diag-btn');
+  btns.forEach(btn => {
+    if (btn.getAttribute('onclick') === `simSubmit('${simScenario.answer}')`) btn.classList.add('correct');
+    if (btn.getAttribute('onclick') === `simSubmit('${compId}')` && !correct) btn.classList.add('wrong');
+  });
+
+  // Build tested history
+  const histHtml = SIM_COMPS.filter(c => simTested[c.id]).map(c => {
+    const d = simScenario.comps[c.id];
+    const st = d ? d.type : 'note';
+    const lbl = st === 'ok' ? 'OK' : st === 'bad' ? 'FALLA' : 'NOTA';
+    const cls = st === 'ok' ? 'lab-path-yes' : st === 'bad' ? 'lab-path-no' : '';
+    return `<div class="lab-path-item"><span class="lab-path-q">${c.icon} ${c.name}</span><span class="${cls}" style="${!cls?'color:var(--warn)':''}">${lbl}</span></div>`;
+  }).join('');
+
+  // Append result below the buttons
+  const resultHtml = `
+    <div style="padding:20px 0 10px;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:6px">${correct ? '✅' : '❌'}</div>
+      <div style="font-size:1rem;font-weight:600">${correct ? 'Diagnóstico correcto' : 'Diagnóstico incorrecto'}</div>
+      ${!correct ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:4px">Seleccionaste: ${chosen.icon} ${chosen.name}</div>` : ''}
     </div>
     <div class="lab-result-card">
-      <div class="lab-result-label">Componente defectuoso identificado</div>
-      <div class="lab-result-comp">${node.comp}</div>
-      <div class="lab-result-action">⚙ ${node.action}</div>
-      <div class="lab-result-detail">${node.detail}</div>
+      <div class="lab-result-label">Componente defectuoso</div>
+      <div class="lab-result-comp">${right.icon} ${right.name}</div>
+      <div class="lab-result-action">⚙ ${simScenario.action}</div>
+      <div class="lab-result-detail">${simScenario.explanation}</div>
     </div>
-    <div class="section-label" style="margin-bottom:10px">Ruta de diagnóstico</div>
-    <div class="lab-path">${pathHtml}</div>
-    <button class="btn-primary" onclick="showLab()" style="margin-top:4px">Diagnosticar otra falla</button>
-    <button class="btn-secondary" onclick="labSelectFault('${labCurrentFault.code}')" style="margin-top:10px">Reintentar este código</button>
+    ${tested > 0 ? `
+      <div class="section-label" style="margin-bottom:10px">Componentes medidos (${tested}/${SIM_COMPS.length})</div>
+      <div class="lab-path">${histHtml}</div>` : ''}
+    <button class="btn-primary" onclick="simStartRandom()" style="margin-top:4px">Nueva falla aleatoria</button>
+    <button class="btn-secondary" onclick="simBegin(${SIM_SCENARIOS.indexOf(simScenario)})" style="margin-top:10px">Repetir este escenario</button>
   `;
+
+  const main = document.getElementById('lab-main');
+  const existing = main.innerHTML;
+  main.innerHTML = existing + resultHtml;
+  simPhase = 'result';
+  document.getElementById('lab-pill').textContent = correct ? '✓ Correcto' : '✗ Incorrecto';
 }
 
 let deferredPrompt = null;
