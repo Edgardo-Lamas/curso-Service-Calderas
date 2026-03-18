@@ -624,7 +624,7 @@ body {
 <!-- HOME -->
 <div id="home" class="screen">
   <div class="topbar">
-    <div onclick="devTap()" style="cursor:default;user-select:none">
+    <div onpointerdown="devTap(event)" style="cursor:default;-webkit-user-select:none;user-select:none">
       <div class="topbar-title">Calderas</div>
       <div class="topbar-sub" id="home-alumno-sub">Servicio Técnico Residencial</div>
     </div>
@@ -1521,10 +1521,11 @@ function goHome() {
 }
 
 let _devTaps = 0, _devTimer = null;
-function devTap() {
+function devTap(e) {
+  e.preventDefault();
   _devTaps++;
   clearTimeout(_devTimer);
-  _devTimer = setTimeout(() => { _devTaps = 0; }, 2000);
+  _devTimer = setTimeout(() => { _devTaps = 0; }, 3500);
   if (_devTaps >= 5) {
     _devTaps = 0;
     document.getElementById('btn-cambiar-usuario').style.display = 'block';
