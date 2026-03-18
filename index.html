@@ -192,8 +192,8 @@ body {
   background: var(--bg);
   position: sticky; top: 0; z-index: 10;
 }
-.topbar-title { font-size: 1rem; font-weight: 600; }
-.topbar-sub { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.topbar-title { font-size: 1rem; font-weight: 600; -webkit-user-select:none; user-select:none; }
+.topbar-sub { font-size: 0.75rem; color: var(--muted); margin-top: 1px; -webkit-user-select:none; user-select:none; }
 .progress-pill {
   background: var(--bg3); border: 1px solid var(--border);
   border-radius: 20px; padding: 4px 12px;
@@ -624,7 +624,7 @@ body {
 <!-- HOME -->
 <div id="home" class="screen">
   <div class="topbar">
-    <div onpointerdown="devTap(event)" style="cursor:default;-webkit-user-select:none;user-select:none">
+    <div onpointerdown="devTap(event)" onselectstart="return false" style="cursor:default;-webkit-user-select:none;user-select:none">
       <div class="topbar-title">Calderas</div>
       <div class="topbar-sub" id="home-alumno-sub">Servicio Técnico Residencial</div>
     </div>
