@@ -1501,9 +1501,27 @@ function showScreen(id) {
   window.scrollTo(0,0);
 }
 
+function restoreProgressFromSheets(email, callback) {
+  const url = SHEETS_URL + '?action=getProgress&email=' + encodeURIComponent(email);
+  const timeout = new Promise((_, reject) => setTimeout(() => reject('timeout'), 6000));
+  Promise.race([fetch(url, { redirect: 'follow' }), timeout])
+    .then(r => r.json())
+    .then(data => {
+      let restauradas = 0;
+      if (data.ok && Array.isArray(data.clases) && data.clases.length > 0) {
+        const progress = getProgress();
+        const antes = Object.keys(progress).length;
+        data.clases.forEach(c => { progress[c] = true; });
+        saveProgress(progress);
+        restauradas = Object.keys(progress).length - antes;
+      }
+      callback(restauradas);
+    })
+    .catch(() => callback(0));
+}
+
 function goHome() {
   const nombreInput = document.getElementById('input-nombre');
-  // Si estamos en splash, validar nombre
   if (currentScreen === 'splash') {
     const nombre = nombreInput ? nombreInput.value.trim() : '';
     const alumnoGuardado = getAlumno();
@@ -1517,10 +1535,27 @@ function goHome() {
       saveAlumno(nombre, email.trim());
     }
   }
-  checkReminder();
-  renderHome();
-  showScreen('home');
-  setTimeout(checkNotifBanner, 1500);
+
+  const alumno = getAlumno();
+  if (alumno && alumno.email) {
+    const btn = document.querySelector('#splash .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Verificando progreso…'; }
+    restoreProgressFromSheets(alumno.email, (restauradas) => {
+      if (btn) { btn.disabled = false; btn.textContent = 'Comenzar curso'; }
+      checkReminder();
+      renderHome();
+      showScreen('home');
+      if (restauradas > 0) {
+        setTimeout(() => showToast('✓ ' + restauradas + ' clase' + (restauradas > 1 ? 's' : '') + ' recuperada' + (restauradas > 1 ? 's' : '') + ' de tu historial'), 300);
+      }
+      setTimeout(checkNotifBanner, 1500);
+    });
+  } else {
+    checkReminder();
+    renderHome();
+    showScreen('home');
+    setTimeout(checkNotifBanner, 1500);
+  }
 }
 
 let _devTaps = 0, _devTimer = null;
